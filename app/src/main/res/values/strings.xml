@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Project Manager</string>
+    <string name="change_language">Change language</string>
+    <string name="organize_your_projects">Organize your Projects.</string>
+    <string name="platform_description">A Platform to manage your projects and tasks.</string>
+    <string name="start">Get Started</string>
+    <string name="lang">EN</string>
+    <!-- Login Screen -->
+    <string name="login_title">Login</string>
+    <string name="welcome_message">Hello, welcome! Please start by logging in.</string>
+    <string name="email_hint">Enter your Email...</string>
+    <string name="email_input_hint">email@example.com</string>
+    <string name="password_hint">Enter your Password...</string>
+    <string name="password_input_hint">••••••••</string>
+    <string name="login_button">Login</string>
+    <string name="register_prompt">Don\'t have an account yet? Register</string>
+    <string name="data_security_message">Your data is secure!</string>
+    <string name="back">Back</string>
+    <string name="company_logo">Company Logo</string>
+    <string name="register_title">Create Account</string>
+    <string name="name_hint">Name</string>
+    <string name="username_hint">Username</string>
+    <string name="email_hint_R">Email</string>
+    <string name="password_hint_R">Password</string>
+    <string name="register_button">Register</string>
+    <string name="login_prompt">Already have an account? Login</string>
+    <plurals name="tasks_count">
+        <item quantity="one">%d Task</item>
+        <item quantity="many">%d Tasks</item>
+    </plurals>
+    <string name="logout">Logout</string>
+    <string name="projects">Projects</string>
+    <string name="manage_project">Create Projects</string>
+    <string name="manage_users">Manage Users</string>
+    <string name="main">Main</string>
+    <string name="create_projects">Create Projects</string>
+    <string name="manage_tasks">Manage Tasks</string>
+    <string name="users">Users</string>
+    <string name="profile">Profile</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="name">Name</string>
+    <string name="enter_project_name">Insert project name</string>
+    <string name="description">Description</string>
+    <string name="enter_project_description">Insert project description</string>
+    <string name="project_manager">Project Manager</string>
+    <string name="create">Create</string>
+</resources>

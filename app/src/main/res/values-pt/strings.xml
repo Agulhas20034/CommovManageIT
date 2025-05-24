@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">ManageIT</string>
+    <string name="change_language">Mudar idioma</string>
+    <string name="organize_your_projects">Organize os seus Projetos.</string>
+    <string name="platform_description">Uma Plataforma para gerir os seus projetos e as suas tarefas.</string>
+    <string name="start">Começar</string>
+    <string name="lang">PT</string>
+    <string name="login_title">Login</string>
+    <string name="welcome_message">Olá, seja Bem-Vindo! Comece por efetuar o seu Login, por favor.</string>
+    <string name="email_hint">Digite o seu Email...</string>
+    <string name="email_input_hint">email@exemplo.com</string>
+    <string name="password_hint">Digite a sua Password...</string>
+    <string name="password_input_hint">••••••••</string>
+    <string name="login_button">Login</string>
+    <string name="register_prompt">Ainda não tem conta? Registe-se</string>
+    <string name="data_security_message">Os teus Dados estão seguros!</string>
+    <string name="back">Voltar</string>
+    <string name="company_logo">Logo empresa</string>
+    <string name="register_title">Criar Conta</string>
+    <string name="name_hint">Nome</string>
+    <string name="username_hint">Nome de Utilizador</string>
+    <string name="email_hint_R">Email</string>
+    <string name="password_hint_R">Palavra-passe</string>
+    <string name="register_button">Registar</string>
+    <string name="login_prompt">Já tem conta? Faça Login</string>
+    <plurals name="tasks_count">
+        <item quantity="one">%d Tarefa</item>
+        <item quantity="many">%d Tarefas</item>
+    </plurals>
+    <string name="logout">Sair</string>
+    <string name="projects">Projetos</string>
+    <string name="manage_project">Criar Projetos</string>
+    <string name="manage_users">Gerir Utilizadores</string>
+    <string name="main">Principal</string>
+    <string name="create_projects">Criar Projetos</string>
+    <string name="manage_tasks">Gerir Tarefas</string>
+    <string name="users">Utilizadores</string>
+    <string name="profile">Perfil</string>
+    <string name="edit_profile">Editar Perfil</string>
+    <string name="name">Nome</string>
+    <string name="enter_project_name">Introduza o nome do projeto</string>
+    <string name="description">Descrição</string>
+    <string name="enter_project_description">Introduza a descrição do projeto</string>
+    <string name="project_manager">Gestor do projeto</string>
+    <string name="create">Criar</string>
+
+
+
+
+
+
+</resources>
