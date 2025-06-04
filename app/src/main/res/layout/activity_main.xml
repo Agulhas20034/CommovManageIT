@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +7,6 @@
     android:padding="24dp"
     tools:context=".MainActivity">
 
-    <!-- Top bar with back button and language toggle -->
     <RelativeLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -51,7 +49,6 @@
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
-        <!-- Logo and text content -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

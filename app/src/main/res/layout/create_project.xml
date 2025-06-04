@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".CreateProjectActivity">
-    <!-- Top bar with back button and language toggle -->
     <RelativeLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -62,7 +60,6 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <!-- Main content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -75,7 +72,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Nome -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,7 +88,6 @@
                 android:inputType="textCapWords"
                 android:background="@drawable/edittext_background"/>
 
-            <!-- Descrição -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,7 +106,6 @@
                 android:gravity="top"
                 android:background="@drawable/edittext_background"/>
 
-            <!-- Project Manager -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -127,7 +121,6 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/spinner_background"/>
 
-            <!-- Create Button -->
             <Button
                 android:id="@+id/btnCreateProject"
                 android:layout_width="match_parent"
@@ -139,7 +132,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Navigation (included template) -->
     <include
         layout="@layout/bottom_nav_bar"
         android:layout_width="match_parent"

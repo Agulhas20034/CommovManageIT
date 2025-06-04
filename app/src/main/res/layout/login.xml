@@ -7,7 +7,6 @@
     android:background="@color/white"
     tools:context=".LoginActivity">
 
-    <!-- Top bar with back button and language toggle -->
     <RelativeLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -65,7 +64,6 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <!-- Company Logo -->
             <ImageView
                 android:id="@+id/logo"
                 android:layout_width="120dp"
@@ -74,7 +72,6 @@
                 android:contentDescription="@string/company_logo"
                 android:src="@drawable/app_logo" />
 
-            <!-- Login title and welcome message -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -93,7 +90,6 @@
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <!-- Email Input -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -114,7 +110,6 @@
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Password Input -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -137,7 +132,6 @@
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Login Button -->
             <Button
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
@@ -148,7 +142,6 @@
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 
-            <!-- Divider -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -156,7 +149,6 @@
                 android:layout_marginBottom="24dp"
                 android:background="@color/gray_light" />
 
-            <!-- Register prompt -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -3,72 +3,63 @@ package com.example.commovmanageit
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import java.util.Locale
 import androidx.core.content.edit
+import com.example.commovmanageit.TestActivity
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
-
-    private var currentLanguage = "en" // default language
+    private var currentLanguage = "en"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        loadLanguage()
         setContentView(R.layout.activity_main)
 
-        // Get current language from shared preferences
-        val sharedPref = getPreferences(Context.MODE_PRIVATE)
-        currentLanguage = sharedPref.getString("language", "en") ?: "en"
+        setupLanguageButton()
+        setupStartButton()
+    }
 
-        // Set up language switcher button
-        val btnLanguage = findViewById<ImageButton>(R.id.btnLanguage)
-        btnLanguage.setOnClickListener {
+    private fun setupLanguageButton() {
+        findViewById<ImageButton>(R.id.btnLanguage).setOnClickListener {
             toggleLanguage()
         }
+    }
 
-        // Set up start button
-        val btnStart = findViewById<Button>(R.id.btnStart)
-        btnStart.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+    private fun setupStartButton() {
+        findViewById<Button>(R.id.btnStart).setOnClickListener {
+            startActivity(Intent(this, TestActivity::class.java))
         }
     }
 
     private fun toggleLanguage() {
         currentLanguage = if (currentLanguage == "en") "pt" else "en"
-
-        // Save language preference
-        getPreferences(Context.MODE_PRIVATE).edit {
-            putString("language", currentLanguage)
-        }
-
-        // Update app language
+        saveLanguage(currentLanguage)
         updateLanguage(currentLanguage)
-
-        // Restart activity to apply changes
         recreate()
+    }
+
+    private fun loadLanguage() {
+        val sharedPref = getPreferences(Context.MODE_PRIVATE)
+        currentLanguage = sharedPref.getString("language", "en") ?: "en"
+        updateLanguage(currentLanguage)
+    }
+
+    private fun saveLanguage(lang: String) {
+        getPreferences(Context.MODE_PRIVATE).edit {
+            putString("language", lang)
+        }
     }
 
     private fun updateLanguage(languageCode: String) {
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
-
-        val resources: Resources = resources
-        val config: Configuration = resources.configuration
+        val config = Configuration(resources.configuration)
         config.setLocale(locale)
+        createConfigurationContext(config)
         resources.updateConfiguration(config, resources.displayMetrics)
-    }
-
-    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
-        if (overrideConfiguration != null) {
-            val uiMode = overrideConfiguration.uiMode
-            overrideConfiguration.setTo(baseContext.resources.configuration)
-            overrideConfiguration.uiMode = uiMode
-        }
-        super.applyOverrideConfiguration(overrideConfiguration)
     }
 }

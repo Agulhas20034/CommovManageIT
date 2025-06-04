@@ -13,10 +13,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class BottomNavigationHelper(
     private val activity: Activity,
     private val bottomNav: BottomNavigationView,
-    private val currentUserRole: String // "admin", "user", etc.
+    private val currentUserRole: String
 ) {
 
-    // Define menu resources for each user role
     companion object {
         const val ROLE_ADMIN = "admin"
         const val ROLE_MANAGER = "manager"
@@ -28,12 +27,11 @@ class BottomNavigationHelper(
                 ROLE_ADMIN -> R.menu.bottom_nav_menu_a
                 ROLE_MANAGER -> R.menu.bottom_nav_menu_g
 
-                else -> R.menu.bottom_nav_menu_u // Default
+                else -> R.menu.bottom_nav_menu_u
             }
         }
     }
 
-    // Initialize and set up listeners
     fun setup() {
         loadMenuForCurrentRole()
         setNavigationItemSelectedListener()

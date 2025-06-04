@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
 }
 
 android {
@@ -48,4 +51,34 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(platform("io.github.jan-tennert.supabase:bom:2.3.0"))
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt")
+    implementation("io.github.jan-tennert.supabase:realtime-kt")
+    implementation("io.github.jan-tennert.supabase:storage-kt")
+    implementation("io.ktor:ktor-client-okhttp:2.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.room:room-ktx:2.6.0")
+    implementation("io.github.jan-tennert.supabase:realtime-kt:1.4.1")
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.2.1")
+    implementation("io.github.jan-tennert.supabase:realtime-kt:2.2.1")
+    implementation ("androidx.room:room-runtime:2.6.1")
+    kapt ("androidx.room:room-compiler:2.6.1")
+    implementation ("androidx.room:room-ktx:2.6.1")
+        // Supabase
+        implementation("io.github.jan-tennert.supabase:postgrest-kt:1.4.1")
+        implementation("io.github.jan-tennert.supabase:gotrue-kt:1.4.1")
+
+        // Room
+        implementation("androidx.room:room-runtime:2.6.1")
+        kapt("androidx.room:room-compiler:2.6.1")
+        implementation("androidx.room:room-ktx:2.6.1")
+
+        // Coroutines
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+        // Lifecycle
+        implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+
 }

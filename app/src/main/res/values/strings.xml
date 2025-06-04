@@ -5,12 +5,11 @@
     <string name="platform_description">A Platform to manage your projects and tasks.</string>
     <string name="start">Get Started</string>
     <string name="lang">EN</string>
-    <!-- Login Screen -->
     <string name="login_title">Login</string>
     <string name="welcome_message">Hello, welcome! Please start by logging in.</string>
-    <string name="email_hint">Enter your Email...</string>
+    <string name="email_hint">Enter your Email…</string>
     <string name="email_input_hint">email@example.com</string>
-    <string name="password_hint">Enter your Password...</string>
+    <string name="password_hint">Enter your Password…</string>
     <string name="password_input_hint">••••••••</string>
     <string name="login_button">Login</string>
     <string name="register_prompt">Don\'t have an account yet? Register</string>
@@ -44,4 +43,19 @@
     <string name="enter_project_description">Insert project description</string>
     <string name="project_manager">Project Manager</string>
     <string name="create">Create</string>
+    <string name="manage_project2">Manage Project</string>
+    <string name="add_task">Add Task</string>
+    <string name="add_user">Add User</string>
+    <string name="Delete_project">Delete Project</string>
+    <string name="tasks">Tasks</string>
+    <string name="Edit_project">Edit Project Info</string>
+    <string name="delete_dialog_title">Confirm Delete</string>
+    <string name="delete_dialog_message_project">Are you sure you want to delete this project?</string>
+    <string name="delete_button">Delete</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="deleting_progress_message">Deleting project…</string>
+    <string name="delete_success_message">Project deleted successfully</string>
+    <string name="edit">Edit</string>
+    <string name="edit_projects">Edit Project Info</string>
+    <string name="Create_Task">Create Task</string>
 </resources>
