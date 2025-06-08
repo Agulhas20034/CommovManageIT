@@ -1,87 +1,86 @@
 package com.example.commovmanageit.db.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
 import com.example.commovmanageit.db.entities.User
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @Dao
 interface UserDao {
+    @Insert
+    suspend fun insert(user: User)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: User): Long
+    @Insert
+    suspend fun insertAll(users: List<User>)
 
     @Update
-    suspend fun update(user: User): Int
+    suspend fun update(user: User)
 
-    @Query("DELETE FROM users WHERE id = :id")
-    suspend fun delete(id: String): Int
+    @Delete
+    suspend fun delete(user: User)
 
     @Query("SELECT * FROM users WHERE id = :id")
     suspend fun getById(id: String): User?
 
-    @Query("SELECT * FROM users ORDER BY email ASC")
-    fun getAll(): Flow<List<User>>
+    @Query("SELECT * FROM users WHERE deleted_at IS NULL ORDER BY email ASC")
+    suspend fun getAllActive(): List<User>
+
+    @Query("SELECT * FROM users WHERE role_id = :roleId AND deleted_at IS NULL ORDER BY email ASC")
+    suspend fun getByRoleId(roleId: String): List<User>
 
     @Query("SELECT * FROM users WHERE email = :email AND deleted_at IS NULL LIMIT 1")
     suspend fun getByEmail(email: String): User?
 
-    @Query("SELECT * FROM users WHERE email = :email AND password = :password AND deleted_at IS NULL LIMIT 1")
-    suspend fun authenticate(email: String, password: String): User?
+    @Query("SELECT * FROM users WHERE is_synced = 0 AND deleted_at IS NULL")
+    suspend fun getUnsyncedCreatedOrUpdated(): List<User>
 
-    @Query("SELECT * FROM users WHERE role_id = :roleId AND deleted_at IS NULL")
-    fun getUsersByRole(roleId: String): Flow<List<User>>
+    @Query("SELECT * FROM users WHERE deleted_at IS NOT NULL AND is_synced = 0")
+    suspend fun getUnsyncedDeleted(): List<User>
 
-    @Query("UPDATE users SET role_id = :roleId, updated_at = :timestamp WHERE id = :userId")
-    suspend fun updateUserRole(userId: String, roleId: String, timestamp: Long = System.currentTimeMillis()): Int
+    @Query("UPDATE users SET is_synced = :isSynced WHERE id = :id")
+    suspend fun updateSyncStatus(id: String, isSynced: Boolean)
 
-    @Query("UPDATE users SET deleted_at = :timestamp, updated_at = :timestamp WHERE id = :id")
-    suspend fun softDelete(id: String, timestamp: Long = System.currentTimeMillis()): Int
+    @Query("UPDATE users SET is_synced = :isSynced, server_id = :serverId WHERE id = :id")
+    suspend fun updateSyncInfo(id: String, isSynced: Boolean, serverId: String?)
 
-    @Query("SELECT * FROM users WHERE deleted_at IS NULL")
-    fun getAllActive(): Flow<List<User>>
+    @Query("UPDATE users SET deleted_at = :timestamp WHERE id = :id")
+    suspend fun softDelete(id: String, timestamp: Instant = Clock.System.now())
 
-    @Query("UPDATE users SET deleted_at = NULL, updated_at = :timestamp WHERE id = :id")
-    suspend fun restore(id: String, timestamp: Long = System.currentTimeMillis()): Int
+    @Query("SELECT * FROM users WHERE created_at >= :since AND deleted_at IS NULL ORDER BY created_at DESC")
+    suspend fun getCreatedSince(since: Instant): List<User>
 
-    @Query("SELECT * FROM users WHERE is_synced = 0")
-    suspend fun getUnsyncedUsers(): List<User>
+    @Query("SELECT * FROM users WHERE updated_at >= :since AND deleted_at IS NULL ORDER BY updated_at DESC")
+    suspend fun getUpdatedSince(since: Instant): List<User>
+
+    @Query("SELECT * FROM users WHERE deleted_at IS NULL ORDER BY email ASC")
+    fun observeAllActive(): Flow<List<User>>
+
+    @Query("SELECT * FROM users WHERE id = :id")
+    fun observeById(id: String): Flow<User?>
+
+    @Query("SELECT * FROM users WHERE is_synced = 0 AND deleted_at IS NULL")
+    fun observeUnsyncedChanges(): Flow<List<User>>
+
+    @Query("SELECT * FROM users WHERE deleted_at IS NOT NULL AND is_synced = 0")
+    fun observeUnsyncedDeletes(): Flow<List<User>>
 
     @Query("UPDATE users SET is_synced = 1, server_id = :serverId WHERE id = :localId")
-    suspend fun markAsSynced(localId: String, serverId: String): Int
+    suspend fun markAsSynced(localId: String, serverId: String)
 
-    @Query("SELECT * FROM users WHERE server_id = :serverId LIMIT 1")
-    suspend fun getByServerId(serverId: String): User?
+    @Query("DELETE FROM users WHERE deleted_at IS NOT NULL AND is_synced = 1")
+    suspend fun purgeDeleted()
 
-    @Query("UPDATE users SET daily_work_hours = :hours, updated_at = :timestamp WHERE id = :userId")
-    suspend fun updateDailyWorkHours(userId: String, hours: Int, timestamp: Long = System.currentTimeMillis()): Int
+    @Query("SELECT COUNT(*) FROM users WHERE deleted_at IS NULL")
+    suspend fun getActiveCount(): Int
 
-    @Query("SELECT AVG(daily_work_hours) FROM users WHERE deleted_at IS NULL")
-    suspend fun getAverageDailyWorkHours(): Float?
+    @Query("SELECT COUNT(*) FROM users WHERE is_synced = 0")
+    suspend fun getUnsyncedCount(): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(users: List<User>): List<Long>
-
-    @Query("DELETE FROM users WHERE id IN (:ids)")
-    suspend fun deleteAllById(ids: List<String>): Int
-
-    @Transaction
-    suspend fun upsert(user: User) {
-        if (exists(user.id)) {
-            user.updatedAt = System.currentTimeMillis()
-            update(user)
-        } else {
-            insert(user)
-        }
-    }
-
-    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE id = :id LIMIT 1)")
-    suspend fun exists(id: String): Boolean
-
-    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE email = :email LIMIT 1)")
-    suspend fun emailExists(email: String): Boolean
+    @Query("DELETE FROM users")
+    suspend fun deleteAll()
 }

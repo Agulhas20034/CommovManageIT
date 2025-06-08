@@ -7,6 +7,8 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.commovmanageit.db.entities.Customer
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @Dao
 interface CustomerDao {
@@ -25,9 +27,8 @@ interface CustomerDao {
     @Query("SELECT * FROM customers ORDER BY name ASC")
     suspend fun getAll(): List<Customer>
 
-
     @Query("UPDATE customers SET deleted_at = :timestamp WHERE id = :id")
-    suspend fun softDelete(id: String, timestamp: Long = System.currentTimeMillis())
+    suspend fun softDelete(id: String, timestamp: Instant = Clock.System.now())
 
     @Query("SELECT * FROM customers WHERE is_synced = 0 AND deleted_at IS NULL")
     suspend fun getUnsyncedCreatedOrUpdated(): List<Customer>
@@ -50,8 +51,8 @@ interface CustomerDao {
     @Query("SELECT * FROM customers WHERE email = :email AND deleted_at IS NULL LIMIT 1")
     suspend fun getByEmail(email: String): Customer?
 
-    @Query("SELECT * FROM customers WHERE phone_number = :phoneNumber AND deleted_at IS NULL LIMIT 1")
-    suspend fun getByPhoneNumber(phoneNumber: String): Customer?
+    @Query("SELECT * FROM customers WHERE phone_number = :phone_Number AND deleted_at IS NULL LIMIT 1")
+    suspend fun getByPhoneNumber(phone_Number: String): Customer?
 
     @Query("SELECT * FROM customers WHERE created_at >= :since AND deleted_at IS NULL ORDER BY created_at DESC")
     suspend fun getCreatedSince(since: Long): List<Customer>
@@ -85,5 +86,8 @@ interface CustomerDao {
 
     @Query("SELECT COUNT(*) FROM customers WHERE is_synced = 0")
     suspend fun getUnsyncedCount(): Int
+
+    @Query("DELETE FROM customers")
+    suspend fun deleteAll()
 
 }

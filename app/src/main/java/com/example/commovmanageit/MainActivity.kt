@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
-import com.example.commovmanageit.TestActivity
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -31,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupStartButton() {
         findViewById<Button>(R.id.btnStart).setOnClickListener {
-            startActivity(Intent(this, TestActivity::class.java))
+
         }
     }
 

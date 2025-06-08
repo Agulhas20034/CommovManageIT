@@ -1,5 +1,4 @@
 package com.example.commovmanageit.db.repositories
-
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -8,13 +7,14 @@ import com.example.commovmanageit.remote.dto.toRemote
 import com.example.commovmanageit.remote.SupabaseManager
 import com.example.commovmanageit.db.dao.CustomerDao
 import com.example.commovmanageit.db.entities.Customer
+import com.example.commovmanageit.remote.dto.toLocal
 import com.example.commovmanageit.utils.ConnectivityMonitor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimePeriod
-import java.util.Date
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -40,14 +40,17 @@ class CustomerRepository(
     }
 
     suspend fun updateLocal(customer: Customer) {
-        customer.updatedAt = Date()
+        customer.updatedAt = Clock.System.now()
         customerDao.update(customer)
         syncIfConnected()
     }
 
-    suspend fun deleteLocal(id: String) {
+    suspend fun deleteLocal(id: String,type: String) {
         customerDao.softDelete(id)
-        syncIfConnected()
+        if(type.equals("Test"))
+            return
+        else
+            syncIfConnected()
     }
 
     suspend fun getByIdLocal(id: String): Customer? = customerDao.getById(id)
@@ -56,17 +59,18 @@ class CustomerRepository(
     @RequiresApi(Build.VERSION_CODES.O)
     public suspend fun insertRemote(customer: Customer): String {
         val remoteCustomer = customer.toRemote()
-        val result = SupabaseManager.insert<CustomerRemote>("customers", remoteCustomer)
+        val result = SupabaseManager.insertCustomer<CustomerRemote>(remoteCustomer)
         return result.id
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private suspend fun updateRemote(customer: Customer) {
+    suspend fun updateRemote(customer: Customer): CustomerRemote {
         val remoteCustomer = customer.toRemote()
-        SupabaseManager.update<CustomerRemote>("customers", customer.serverId ?: customer.id, remoteCustomer)
+        Log.d("CustomerRepository", "Updating remote customer: ${customer.id}")
+        return SupabaseManager.updateCustomer<CustomerRemote>(customer.serverId ?: customer.id, remoteCustomer)
     }
 
-    private suspend fun deleteRemote(id: String) {
+    suspend fun deleteRemote(id: String) {
         SupabaseManager.delete("customers", id)
     }
 
@@ -74,15 +78,21 @@ class CustomerRepository(
     suspend fun insert(customer: Customer): Customer {
         val newCustomer = customer.copy(
             id = customer.id.ifEmpty { UUID.randomUUID().toString() },
-            updatedAt = Date()
+            updatedAt = Clock.System.now()
         )
 
-        return try {
-            val serverId = insertRemote(newCustomer)
-            val syncedCustomer = newCustomer.copy(isSynced = true, serverId = serverId)
-            customerDao.insert(syncedCustomer)
-            syncedCustomer
-        } catch (e: Exception) {
+        return if (connectivityMonitor.isConnected) {
+            try {
+                val serverId = newCustomer.id
+                val syncedCustomer = newCustomer.copy(isSynced = true, serverId = serverId)
+                insertRemote(syncedCustomer)
+                insertLocal(syncedCustomer)
+                syncedCustomer
+            } catch (e: Exception) {
+                customerDao.insert(newCustomer)
+                newCustomer
+            }
+        } else {
             customerDao.insert(newCustomer)
             newCustomer
         }
@@ -90,17 +100,22 @@ class CustomerRepository(
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun update(customer: Customer) {
-        val updatedCustomer = customer.copy(updatedAt = Date())
+        val updatedCustomer = customer.copy(updatedAt = Clock.System.now())
 
-        try {
-            if (updatedCustomer.serverId != null) {
-                updateRemote(updatedCustomer)
-                customerDao.update(updatedCustomer.copy(isSynced = true))
-            } else {
-                val serverId = insertRemote(updatedCustomer)
-                customerDao.update(updatedCustomer.copy(isSynced = true, serverId = serverId))
+        if (connectivityMonitor.isConnected) {
+            try {
+                if (updatedCustomer.serverId != null) {
+                    updateRemote(updatedCustomer)
+                    Log.d("CustomerRepository", "Updated remote customer: ${updatedCustomer.id}")
+                    customerDao.update(updatedCustomer.copy(isSynced = true))
+                } else {
+                    val serverId = insertRemote(updatedCustomer)
+                    customerDao.update(updatedCustomer.copy(isSynced = true, serverId = serverId))
+                }
+            } catch (e: Exception) {
+                customerDao.update(updatedCustomer)
             }
-        } catch (e: Exception) {
+        } else {
             customerDao.update(updatedCustomer)
         }
     }
@@ -123,9 +138,12 @@ class CustomerRepository(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun syncIfConnected() {
-        try {
-            syncChanges()
-        } catch (e: Exception) {
+        if (connectivityMonitor.isConnected) {
+            try {
+                syncChanges()
+            } catch (e: Exception) {
+                Log.d("CustomerRepository", "Sync failed: ${e.message}", e)
+            }
         }
     }
 
@@ -141,11 +159,13 @@ class CustomerRepository(
                     customerDao.updateSyncStatus(customer.id, true)
                 }
             } catch (e: Exception) {
+                Log.d("CustomerRepository", "Erro ao sincronizar cliente ${customer.id}", e)
             }
         }
 
         customerDao.getUnsyncedDeleted().forEach { customer ->
             try {
+                Log.d("CustomerRepository", "Deleting remote customer: ${customer.id}")
                 customer.serverId?.let { deleteRemote(it) }
                 customerDao.updateSyncStatus(customer.id, true)
             } catch (e: Exception) {
@@ -181,10 +201,10 @@ class CustomerRepository(
                     serverId = remote.id,
                     name = remote.name,
                     email = remote.email,
-                    phoneNumber = remote.phone_number,
-                    createdAt = Date(remote.created_at),
-                    updatedAt = Date(remote.updated_at),
-                    deletedAt = remote.deleted_at?.let { Date(it) },
+                    phone_Number = remote.phone_number,
+                    createdAt = Instant.parse(remote.created_at),
+                    updatedAt = Instant.parse(remote.updated_at),
+                    deletedAt = remote.deleted_at?.let { Instant.parse(remote.deleted_at) },
                     isSynced = true
                 )
             }
@@ -192,5 +212,24 @@ class CustomerRepository(
             Log.e("CustomerRepository", "Failed to fetch remote customers", e)
             emptyList()
         }
+    }
+
+
+    suspend fun getByIdRemote(id: String): CustomerRemote? {
+        return try {
+            val remoteCustomer = SupabaseManager.fetchById<CustomerRemote>("customers", id)
+
+            remoteCustomer?.let { customer ->
+                customerDao.update(customer.toLocal())
+            }
+
+            return remoteCustomer
+        } catch (e: Exception) {
+            Log.e("CustomerRepository", "Error fetching remote customer(normal if in test)", e)
+            null
+        }
+    }
+    suspend fun clearLocalDatabase() {
+        customerDao.deleteAll()
     }
 }

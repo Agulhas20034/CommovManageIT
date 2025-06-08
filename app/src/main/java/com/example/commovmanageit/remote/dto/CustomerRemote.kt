@@ -1,45 +1,47 @@
 package com.example.commovmanageit.remote.dto
 
 import com.example.commovmanageit.db.entities.Customer
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlinx.serialization.Serializable
-import java.text.SimpleDateFormat
 import java.util.*
+import kotlinx.serialization.SerialName
 
 @Serializable
 data class CustomerRemote(
-    val id: String,
-    val name: String,
-    val email: String,
-    val phone_number: String?,
-    val created_at: String,
-    val updated_at: String,
-    val deleted_at: String?
-) {
-    companion object {
-        val timestampFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).apply {
-            timeZone = TimeZone.getTimeZone("UTC")
-        }
-    }
-}
+    @SerialName("id") val id: String,
+    @SerialName("name") val name: String,
+    @SerialName("email") val email: String,
+    @SerialName("phone_number") val phone_number: String,
+    @SerialName("created_at") val created_at: String,
+    @SerialName("updated_at") val updated_at: String,
+    @SerialName("deleted_at") val deleted_at: String? = null
+)
 
 fun CustomerRemote.toLocal() = Customer(
     id = UUID.randomUUID().toString(),
     serverId = id,
     name = name,
     email = email,
-    phoneNumber = phone_number ?: "",
-    createdAt = CustomerRemote.timestampFormat.parse(created_at) ?: Date(),
-    updatedAt = CustomerRemote.timestampFormat.parse(updated_at) ?: Date(),
-    deletedAt = deleted_at?.let { CustomerRemote.timestampFormat.parse(it) },
-    isSynced = true
+    phone_Number = phone_number,
+    createdAt = parseDateTimeString(created_at),
+    updatedAt = parseDateTimeString(updated_at),
+    deletedAt = deleted_at?.let { parseDateTimeString(it) },
+    isSynced = true,
 )
 
 fun Customer.toRemote() = CustomerRemote(
     id = serverId ?: id,
     name = name,
     email = email,
-    phone_number = phoneNumber,
-    created_at = CustomerRemote.timestampFormat.format(createdAt),
-    updated_at = CustomerRemote.timestampFormat.format(updatedAt),
-    deleted_at = deletedAt?.let { CustomerRemote.timestampFormat.format(it) }
+    phone_number = phone_Number,
+    created_at = createdAt.toString(),
+    updated_at = updatedAt.toString(),
+    deleted_at = deletedAt?.toString()
 )
+private fun parseDateTimeString(dateTimeString: String): Instant {
+    val localDateTime = LocalDateTime.parse(dateTimeString)
+    return localDateTime.toInstant(TimeZone.UTC)
+}

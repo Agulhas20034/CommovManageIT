@@ -1,5 +1,8 @@
+package com.example.commovmanageit.utils
+
 import com.example.commovmanageit.db.entities.Customer
 import kotlinx.coroutines.delay
+import kotlinx.datetime.Clock.System
 import java.util.UUID
 import kotlin.random.Random
 
@@ -9,7 +12,12 @@ object CustomerTestUtils {
             id = UUID.randomUUID().toString(),
             name = "TestCustomer_$prefix",
             email = "test_$prefix@example.com",
-            phoneNumber = "555-${Random.nextInt(1000,9999)}"
+            phone_Number = "555-${Random.nextInt(1000,9999)}",
+            createdAt = System.now(),
+            updatedAt = System.now(),
+            deletedAt = null,
+            isSynced = false,
+            serverId = null
         )
     }
 
@@ -17,7 +25,7 @@ object CustomerTestUtils {
         println("$tag Customer: ${customer.id}")
         println("Name: ${customer.name}")
         println("Email: ${customer.email}")
-        println("Phone: ${customer.phoneNumber}")
+        println("Phone: ${customer.phone_Number}")
         println("Synced: ${customer.isSynced}")
         println("ServerID: ${customer.serverId}")
         println("---------------------")

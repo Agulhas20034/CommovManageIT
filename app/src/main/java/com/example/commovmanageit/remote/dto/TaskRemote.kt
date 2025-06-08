@@ -1,24 +1,25 @@
 package com.example.commovmanageit.remote.dto
 import android.os.Build
 import androidx.annotation.RequiresApi
-import java.time.Instant
+import kotlinx.datetime.Instant
 import com.example.commovmanageit.db.entities.Task
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class TaskRemote(
-    val id: String,
-    val project_id: String,
-    val name: String?,
-    val description: String,
-    val hourly_rate: Float?,
-    val status: String,
-    val userId:String?,
-    val startDate:Long?,
-    val endDate:Long?,
-    val created_at: String,
-    val updated_at: String,
-    val deleted_at: String?
+    @SerialName("id") val id: String,
+    @SerialName("project_id") val project_id: String,
+    @SerialName("name") val name: String?,
+    @SerialName("description") val description: String,
+    @SerialName("hourly_rate") val hourly_rate: Float?,
+    @SerialName("status") val status: String,
+    @SerialName("created_at") val created_at: String,
+    @SerialName("updated_at") val updated_at: String,
+    @SerialName("deleted_at") val deleted_at: String?
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -29,12 +30,9 @@ fun TaskRemote.toLocal() = Task(
     description = description,
     hourlyRate = hourly_rate,
     status = status,
-    createdAt = Instant.parse(created_at).toEpochMilli(),
-    updatedAt = Instant.parse(updated_at).toEpochMilli(),
-    deletedAt = deleted_at?.let { Instant.parse(it).toEpochMilli() },
-    userId = userId,
-    startDate = startDate,
-    endDate = endDate
+    createdAt = parseDateTimeString(created_at),
+    updatedAt = parseDateTimeString(updated_at),
+    deletedAt = deleted_at?.let { parseDateTimeString(it) }
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -45,11 +43,12 @@ fun Task.toRemote() = TaskRemote(
     description = description,
     hourly_rate = hourlyRate,
     status = status,
-    created_at = Instant.ofEpochMilli(createdAt).toString(),
-    updated_at = Instant.ofEpochMilli(updatedAt).toString(),
-    deleted_at = deletedAt?.let { Instant.ofEpochMilli(it).toString() },
-    userId = userId,
-    startDate = startDate,
-    endDate = endDate
-
+    created_at = createdAt.toString(),
+    updated_at = updatedAt.toString(),
+    deleted_at = deletedAt?.let { it.toString() },
 )
+
+private fun parseDateTimeString(dateTimeString: String): Instant {
+    val localDateTime = LocalDateTime.parse(dateTimeString)
+    return localDateTime.toInstant(TimeZone.UTC)
+}

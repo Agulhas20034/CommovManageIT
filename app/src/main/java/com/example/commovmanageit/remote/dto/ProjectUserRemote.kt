@@ -1,26 +1,28 @@
 package com.example.commovmanageit.remote.dto
-import android.os.Build
-import androidx.annotation.RequiresApi
-import java.time.Instant
+
 import com.example.commovmanageit.db.entities.ProjectUser
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ProjectUserRemote(
-    val id: String,
-    val project_id: String,
-    val user_id: String,
-    val inviter_id: String?,
-    val speed: Int?,
-    val quality: Int?,
-    val collaboration: Int?,
-    val status: String,
-    val created_at: String,
-    val updated_at: String,
-    val deleted_at: String?
+    @SerialName("id") val id: String,
+    @SerialName("project_id") val project_id: String,
+    @SerialName("user_id") val user_id: String,
+    @SerialName("inviter_id") val inviter_id: String?,
+    @SerialName("speed") val speed: Int?,
+    @SerialName("quality") val quality: Int?,
+    @SerialName("collaboration") val collaboration: Int?,
+    @SerialName("status") val status: String,
+    @SerialName("created_at") val created_at: String,
+    @SerialName("updated_at") val updated_at: String,
+    @SerialName("deleted_at") val deleted_at: String?
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun ProjectUserRemote.toLocal() = ProjectUser(
     id = id,
     projectId = project_id,
@@ -30,12 +32,11 @@ fun ProjectUserRemote.toLocal() = ProjectUser(
     quality = quality,
     collaboration = collaboration,
     status = status,
-    createdAt = Instant.parse(created_at).toEpochMilli(),
-    updatedAt = Instant.parse(updated_at).toEpochMilli(),
-    deletedAt = deleted_at?.let { Instant.parse(it).toEpochMilli() }
+    createdAt = parseDateTimeString(created_at),
+    updatedAt = parseDateTimeString(updated_at),
+    deletedAt = deleted_at?.let { parseDateTimeString(it) }
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun ProjectUser.toRemote() = ProjectUserRemote(
     id = id,
     project_id = projectId,
@@ -45,7 +46,11 @@ fun ProjectUser.toRemote() = ProjectUserRemote(
     quality = quality,
     collaboration = collaboration,
     status = status,
-    created_at = Instant.ofEpochMilli(createdAt).toString(),
-    updated_at = Instant.ofEpochMilli(updatedAt).toString(),
-    deleted_at = deletedAt?.let { Instant.ofEpochMilli(it).toString() }
+    created_at = createdAt.toString(),
+    updated_at = updatedAt.toString(),
+    deleted_at = deletedAt?.let { deletedAt.toString() }
 )
+private fun parseDateTimeString(dateTimeString: String): Instant {
+    val localDateTime = LocalDateTime.parse(dateTimeString)
+    return localDateTime.toInstant(TimeZone.UTC)
+}

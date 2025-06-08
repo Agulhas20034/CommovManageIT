@@ -2,8 +2,9 @@ package com.example.commovmanageit.db.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @Entity(
     tableName = "project_users"
@@ -26,11 +27,11 @@ data class ProjectUser(
     @ColumnInfo(name = "status")
     val status: String,
     @ColumnInfo(name = "created_at")
-    val createdAt: Long = System.currentTimeMillis(),
+    val createdAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "updated_at")
-    var updatedAt: Long = System.currentTimeMillis(),
+    var updatedAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "deleted_at")
-    var deletedAt: Long? = null,
+    var deletedAt: Instant? = null,
     @ColumnInfo(name = "is_synced", defaultValue = "0")
     val isSynced: Boolean = false,
     @ColumnInfo(name = "server_id")

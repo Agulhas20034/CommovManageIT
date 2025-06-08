@@ -1,9 +1,18 @@
 package com.example.commovmanageit.remote
 
+import android.util.Log
+import com.example.commovmanageit.remote.dto.CustomerRemote
+import com.example.commovmanageit.remote.dto.LogsRemote
+import com.example.commovmanageit.remote.dto.PermissionRemote
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.serializer.KotlinXSerializer
+import io.github.jan.supabase.realtime.Realtime
+import io.github.jan.supabase.storage.Storage
+import kotlinx.datetime.Clock
+import kotlin.time.Duration.Companion.seconds
 
 object SupabaseManager {
     private lateinit var table: String
@@ -15,19 +24,18 @@ object SupabaseManager {
             supabaseUrl = SUPABASE_URL,
             supabaseKey = SUPABASE_KEY
         ) {
-            install(Postgrest)
+            install(Postgrest) {
+                serializer = KotlinXSerializer()
+
+            }
+            install(Storage){
+                transferTimeout = 90.seconds
+            }
+            install(Realtime){
+                reconnectDelay = 5.seconds
+            }
         }
-    }
 
-    // Generic CRUD Operations
-    suspend inline fun <reified T : Any> insert(table: String, data: T): T {
-        return client.postgrest[table].insert(data).decodeSingle()
-    }
-
-    suspend inline fun <reified T : Any> update(table: String, id: String, data: T): T {
-        return client.postgrest[table].update(data) {
-            filter { eq("id", id) }
-        }.decodeSingle()
     }
 
     suspend fun delete(table: String, id: String) {
@@ -45,8 +53,49 @@ object SupabaseManager {
     suspend inline fun <reified T : Any> fetchAll(table: String): List<T> {
         return client.postgrest[table].select().decodeList()
     }
+
     suspend inline fun <reified T : Any> getAll(tableName: String): List<T> {
         return client.postgrest.from(tableName).select().decodeList<T>()
     }
 
+    suspend inline fun <reified T : Any> insertCustomer(data: T): CustomerRemote {
+        val response = client.postgrest["customers"].insert(data){ select() }.decodeSingle<CustomerRemote>()
+        Log.d("id:"," ${response.id}")
+        Log.d("email: ","${response.email}")
+        return response
+    }
+
+    suspend inline fun <reified T : Any> insertLog(data: T): LogsRemote {
+        val response = client.postgrest["logs"].insert(data) { select() }.decodeSingle<LogsRemote>()
+        Log.d("LogInsert", "Log inserido: $response")
+        return response
+    }
+
+    suspend inline fun <reified T : Any> insertPermission(data: T): PermissionRemote {
+        val response = client.postgrest["permissions"].insert(data) { select() }.decodeSingle<PermissionRemote>()
+        Log.d("PermissionInsert", "Permissao inserida: $response")
+        return response
+    }
+
+    suspend inline fun <reified T : Any> updateCustomer(id: String, data: CustomerRemote): CustomerRemote{
+        client.postgrest["customers"].update({
+            CustomerRemote::name setTo data.name
+            CustomerRemote::email setTo data.email
+            CustomerRemote::phone_number setTo data.phone_number
+            CustomerRemote::updated_at setTo Clock.System.now().toString()
+        }) {
+            filter { CustomerRemote::id eq id }
+        }
+        return fetchById("customers",id)
+    }
+
+    suspend inline fun <reified T : Any> updatePermission(id: String, data: PermissionRemote): PermissionRemote{
+        client.postgrest["permissions"].update({
+            PermissionRemote::label setTo data.label
+            PermissionRemote::updated_at setTo Clock.System.now().toString()
+        }) {
+            filter { CustomerRemote::id eq id }
+        }
+        return fetchById("permissions",id)
+    }
 }

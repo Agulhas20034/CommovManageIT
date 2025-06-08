@@ -1,13 +1,22 @@
 package com.example.commovmanageit.db.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import com.example.commovmanageit.db.entities.Permission
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @Dao
 interface PermissionDao {
     @Insert
     suspend fun insert(permission: Permission)
+
+    @Insert
+    suspend fun insertAll(permissions: List<Permission>)
 
     @Update
     suspend fun update(permission: Permission)
@@ -18,14 +27,8 @@ interface PermissionDao {
     @Query("SELECT * FROM permissions WHERE id = :id")
     suspend fun getById(id: String): Permission?
 
-    @Insert
-    suspend fun insertAll(permissions: List<Permission>)
-
-    @Query("DELETE FROM permissions WHERE id IN (:ids)")
-    suspend fun deleteByIds(ids: List<String>)
-
-    @Query("UPDATE permissions SET deleted_at = :timestamp, updated_at = :timestamp WHERE id = :id")
-    suspend fun softDelete(id: String, timestamp: Long = System.currentTimeMillis())
+    @Query("SELECT * FROM permissions WHERE deleted_at IS NULL ORDER BY label ASC")
+    suspend fun getAllActive(): List<Permission>
 
     @Query("SELECT * FROM permissions WHERE is_synced = 0 AND deleted_at IS NULL")
     suspend fun getUnsyncedCreatedOrUpdated(): List<Permission>
@@ -39,17 +42,14 @@ interface PermissionDao {
     @Query("UPDATE permissions SET is_synced = :isSynced, server_id = :serverId WHERE id = :id")
     suspend fun updateSyncInfo(id: String, isSynced: Boolean, serverId: String?)
 
-    @Query("SELECT * FROM permissions WHERE deleted_at IS NULL ORDER BY label ASC")
-    suspend fun getAllActive(): List<Permission>
-
-    @Query("SELECT * FROM permissions WHERE label LIKE :query AND deleted_at IS NULL ORDER BY label ASC")
-    suspend fun searchByLabel(query: String): List<Permission>
+    @Query("UPDATE permissions SET deleted_at = :timestamp WHERE id = :id")
+    suspend fun softDelete(id: String, timestamp: Instant = Clock.System.now())
 
     @Query("SELECT * FROM permissions WHERE created_at >= :since AND deleted_at IS NULL ORDER BY created_at DESC")
-    suspend fun getCreatedSince(since: Long): List<Permission>
+    suspend fun getCreatedSince(since: Instant): List<Permission>
 
     @Query("SELECT * FROM permissions WHERE updated_at >= :since AND deleted_at IS NULL ORDER BY updated_at DESC")
-    suspend fun getUpdatedSince(since: Long): List<Permission>
+    suspend fun getUpdatedSince(since: Instant): List<Permission>
 
     @Query("SELECT * FROM permissions WHERE deleted_at IS NULL ORDER BY label ASC")
     fun observeAllActive(): Flow<List<Permission>>
@@ -63,6 +63,9 @@ interface PermissionDao {
     @Query("SELECT * FROM permissions WHERE deleted_at IS NOT NULL AND is_synced = 0")
     fun observeUnsyncedDeletes(): Flow<List<Permission>>
 
+    @Query("UPDATE permissions SET is_synced = 1, server_id = :serverId WHERE id = :localId")
+    suspend fun markAsSynced(localId: String, serverId: String)
+
     @Query("DELETE FROM permissions WHERE deleted_at IS NOT NULL AND is_synced = 1")
     suspend fun purgeDeleted()
 
@@ -72,9 +75,6 @@ interface PermissionDao {
     @Query("SELECT COUNT(*) FROM permissions WHERE is_synced = 0")
     suspend fun getUnsyncedCount(): Int
 
-    @Query("UPDATE permissions SET is_synced = 1, server_id = :serverId WHERE id = :localId")
-    suspend fun markAsSynced(localId: String, serverId: String)
-
-    @Query("UPDATE permissions SET is_synced = 1 WHERE id IN (:ids)")
-    suspend fun markMultipleAsSynced(ids: List<String>)
+    @Query("DELETE FROM permissions")
+    suspend fun deleteAll()
 }

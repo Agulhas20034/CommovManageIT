@@ -7,78 +7,133 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.commovmanageit.db.AppDatabase
-import com.example.commovmanageit.db.entities.Customer
-import com.example.commovmanageit.db.repositories.CustomerRepository
+import com.example.commovmanageit.db.repositories.CustomerRepositoryTest
+import com.example.commovmanageit.tests.LogRepositoryTest
+import com.example.commovmanageit.tests.PermissionRepositoryTest
 import com.example.commovmanageit.utils.ConnectivityMonitor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
-class TestActivity : AppCompatActivity() {
+class TestActivityCustomer : AppCompatActivity() {
 
-    private lateinit var customerRepository: CustomerRepository
-    private val appCoroutineScope = CoroutineScope(Dispatchers.IO)
-    private lateinit var connectivityMonitor: ConnectivityMonitor
+    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var repositoryTest: CustomerRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-
+        app = application as com.example.commovmanageit.App
+        val customerRepository = app.customerRepository
+        var connectivityMonitor = app.connectivityMonitor
+        val appCoroutineScope = CoroutineScope(Dispatchers.IO)
         connectivityMonitor = ConnectivityMonitor(this)
 
+        repositoryTest = CustomerRepositoryTest(customerRepository, connectivityMonitor)
+
         findViewById<Button>(R.id.runTestButton).setOnClickListener {
-            safeInsertCustomer()
-        }
-
-        initializeDatabase()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun initializeDatabase() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val db = AppDatabase.getDatabase(this@TestActivity)
-                customerRepository = CustomerRepository(
-                    customerDao = db.customerDao(),
-                    connectivityMonitor = connectivityMonitor,
-                    coroutineScope = appCoroutineScope
-                )
-            } catch (e: Exception) {
-                showToast("Database initialization failed: ${e.message}")
-            }
+            runAllTests()
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun safeInsertCustomer() {
+    private fun runAllTests() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val customer = Customer(
-                    id = UUID.randomUUID().toString(),
-                    serverId = null,
-                    name = "Test Customer",
-                    email = "test@example.com",
-                    phoneNumber = "123-456-7890",
-                    createdAt = Date(System.currentTimeMillis()),
-                    updatedAt = Date(System.currentTimeMillis()),
-                    deletedAt = null,
-                    isSynced = false
-                )
-
-                customerRepository.insert(customer)
-                showToast("Customer saved successfully!")
+                repositoryTest.runAllTests()
+                showToast("All tests executed. Check Logcat for results.")
             } catch (e: Exception) {
-                showToast("Error: ${e.message}")
+                showToast("Test execution failed: ${e.message}")
             }
         }
     }
 
     private fun showToast(message: String) {
         runOnUiThread {
-            Toast.makeText(this@TestActivity, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@TestActivityCustomer, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
+class TestActivityLog : AppCompatActivity() {
+
+    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var repositoryTest: LogRepositoryTest
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_test)
+        app = application as com.example.commovmanageit.App
+        val customerRepository = app.logsRepository
+        var connectivityMonitor = app.connectivityMonitor
+        val appCoroutineScope = CoroutineScope(Dispatchers.IO)
+        connectivityMonitor = ConnectivityMonitor(this)
+
+        repositoryTest = LogRepositoryTest(customerRepository, connectivityMonitor)
+
+        findViewById<Button>(R.id.runTestButton).setOnClickListener {
+            runAllTests()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun runAllTests() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                repositoryTest.runAllTests()
+                showToast("All tests executed. Check Logcat for results.")
+            } catch (e: Exception) {
+                showToast("Test execution failed: ${e.message}")
+            }
+        }
+    }
+
+    private fun showToast(message: String) {
+        runOnUiThread {
+            Toast.makeText(this@TestActivityLog, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
+class TestActivityPermission : AppCompatActivity() {
+
+    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var repositoryTest: PermissionRepositoryTest
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_test)
+        app = application as com.example.commovmanageit.App
+        val permissionRepository = app.permissionRepository
+        var connectivityMonitor = app.connectivityMonitor
+        val appCoroutineScope = CoroutineScope(Dispatchers.IO)
+        connectivityMonitor = ConnectivityMonitor(this)
+
+        repositoryTest = PermissionRepositoryTest(permissionRepository, connectivityMonitor)
+
+        findViewById<Button>(R.id.runTestButton).setOnClickListener {
+            runAllTests()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun runAllTests() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                repositoryTest.runAllTests()
+                showToast("All tests executed. Check Logcat for results.")
+            } catch (e: Exception) {
+                showToast("Test execution failed: ${e.message}")
+            }
+        }
+    }
+
+    private fun showToast(message: String) {
+        runOnUiThread {
+            Toast.makeText(this@TestActivityPermission, message, Toast.LENGTH_SHORT).show()
         }
     }
 }

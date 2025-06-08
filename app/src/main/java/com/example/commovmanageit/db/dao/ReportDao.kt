@@ -1,13 +1,22 @@
 package com.example.commovmanageit.db.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import com.example.commovmanageit.db.entities.Report
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @Dao
 interface ReportDao {
     @Insert
-    suspend fun insert(report: Report): Long
+    suspend fun insert(report: Report)
+
+    @Insert
+    suspend fun insertAll(reports: List<Report>)
 
     @Update
     suspend fun update(report: Report)
@@ -18,17 +27,14 @@ interface ReportDao {
     @Query("SELECT * FROM reports WHERE id = :id")
     suspend fun getById(id: String): Report?
 
-    @Query("SELECT * FROM reports WHERE user_id = :userId AND deleted_at IS NULL ORDER BY created_at DESC")
-    suspend fun getByUser(userId: String): List<Report>
+    @Query("SELECT * FROM reports WHERE deleted_at IS NULL ORDER BY created_at DESC")
+    suspend fun getAllActive(): List<Report>
 
     @Query("SELECT * FROM reports WHERE project_id = :projectId AND deleted_at IS NULL ORDER BY created_at DESC")
-    suspend fun getByProject(projectId: String): List<Report>
+    suspend fun getByProjectId(projectId: String): List<Report>
 
-    @Query("SELECT * FROM reports WHERE created_at BETWEEN :start AND :end AND deleted_at IS NULL ORDER BY created_at DESC")
-    suspend fun getByDateRange(start: Long, end: Long): List<Report>
-
-    @Query("SELECT * FROM reports WHERE created_at >= :timestamp AND deleted_at IS NULL ORDER BY created_at DESC")
-    suspend fun getCreatedAfter(timestamp: Long): List<Report>
+    @Query("SELECT * FROM reports WHERE user_id = :userId AND deleted_at IS NULL ORDER BY created_at DESC")
+    suspend fun getByUserId(userId: String): List<Report>
 
     @Query("SELECT * FROM reports WHERE is_synced = 0 AND deleted_at IS NULL")
     suspend fun getUnsyncedCreatedOrUpdated(): List<Report>
@@ -42,20 +48,26 @@ interface ReportDao {
     @Query("UPDATE reports SET is_synced = :isSynced, server_id = :serverId WHERE id = :id")
     suspend fun updateSyncInfo(id: String, isSynced: Boolean, serverId: String?)
 
+    @Query("UPDATE reports SET deleted_at = :timestamp WHERE id = :id")
+    suspend fun softDelete(id: String, timestamp: Instant = Clock.System.now())
+
+    @Query("SELECT * FROM reports WHERE created_at >= :since AND deleted_at IS NULL ORDER BY created_at DESC")
+    suspend fun getCreatedSince(since: Instant): List<Report>
+
+    @Query("SELECT * FROM reports WHERE updated_at >= :since AND deleted_at IS NULL ORDER BY updated_at DESC")
+    suspend fun getUpdatedSince(since: Instant): List<Report>
+
     @Query("SELECT * FROM reports WHERE deleted_at IS NULL ORDER BY created_at DESC")
-    fun observeAll(): Flow<List<Report>>
+    fun observeAllActive(): Flow<List<Report>>
 
-    @Query("SELECT * FROM reports WHERE project_id = :projectId AND deleted_at IS NULL ORDER BY created_at DESC")
-    fun observeByProject(projectId: String): Flow<List<Report>>
-
-    @Query("SELECT * FROM reports WHERE user_id = :userId AND deleted_at IS NULL ORDER BY created_at DESC")
-    fun observeByUser(userId: String): Flow<List<Report>>
+    @Query("SELECT * FROM reports WHERE id = :id")
+    fun observeById(id: String): Flow<Report?>
 
     @Query("SELECT * FROM reports WHERE is_synced = 0 AND deleted_at IS NULL")
     fun observeUnsyncedChanges(): Flow<List<Report>>
 
-    @Insert
-    suspend fun insertAll(reports: List<Report>)
+    @Query("SELECT * FROM reports WHERE deleted_at IS NOT NULL AND is_synced = 0")
+    fun observeUnsyncedDeletes(): Flow<List<Report>>
 
     @Query("UPDATE reports SET is_synced = 1, server_id = :serverId WHERE id = :localId")
     suspend fun markAsSynced(localId: String, serverId: String)
@@ -63,21 +75,12 @@ interface ReportDao {
     @Query("DELETE FROM reports WHERE deleted_at IS NOT NULL AND is_synced = 1")
     suspend fun purgeDeleted()
 
-    @Query("UPDATE reports SET user_id = NULL WHERE user_id = :userId")
-    suspend fun detachFromUser(userId: String)
-
-    @Query("DELETE FROM reports WHERE project_id = :projectId")
-    suspend fun deleteByProject(projectId: String)
-
-    @Query("SELECT COUNT(*) FROM reports WHERE project_id = :projectId AND deleted_at IS NULL")
-    suspend fun countByProject(projectId: String): Int
-
-    @Query("SELECT COUNT(*) FROM reports WHERE user_id = :userId AND deleted_at IS NULL")
-    suspend fun countByUser(userId: String): Int
+    @Query("SELECT COUNT(*) FROM reports WHERE deleted_at IS NULL")
+    suspend fun getActiveCount(): Int
 
     @Query("SELECT COUNT(*) FROM reports WHERE is_synced = 0")
     suspend fun getUnsyncedCount(): Int
 
-    @Query("SELECT * FROM reports WHERE project_id = :projectId AND user_id = :userId AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 1")
-    suspend fun getLatestByProjectAndUser(projectId: String, userId: String): Report?
+    @Query("DELETE FROM reports")
+    suspend fun deleteAll()
 }

@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -48,9 +50,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     implementation(platform("io.github.jan-tennert.supabase:bom:2.3.0"))
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
     implementation("io.github.jan-tennert.supabase:gotrue-kt")
@@ -60,25 +61,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.room:room-ktx:2.6.0")
-    implementation("io.github.jan-tennert.supabase:realtime-kt:1.4.1")
-    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.2.1")
-    implementation("io.github.jan-tennert.supabase:realtime-kt:2.2.1")
     implementation ("androidx.room:room-runtime:2.6.1")
     kapt ("androidx.room:room-compiler:2.6.1")
     implementation ("androidx.room:room-ktx:2.6.1")
-        // Supabase
-        implementation("io.github.jan-tennert.supabase:postgrest-kt:1.4.1")
-        implementation("io.github.jan-tennert.supabase:gotrue-kt:1.4.1")
-
-        // Room
-        implementation("androidx.room:room-runtime:2.6.1")
-        kapt("androidx.room:room-compiler:2.6.1")
-        implementation("androidx.room:room-ktx:2.6.1")
-
-        // Coroutines
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-        // Lifecycle
-        implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+    implementation ("io.ktor:ktor-client-core:2.3.7")
+    implementation ("io.ktor:ktor-client-android:2.3.7")
+    implementation ("io.ktor:ktor-client-cio:2.3.7")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }

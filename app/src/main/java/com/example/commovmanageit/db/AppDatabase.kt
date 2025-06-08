@@ -1,14 +1,13 @@
 package com.example.commovmanageit.db
 
 import android.content.Context
-import java.util.Date
-import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.example.commovmanageit.db.dao.CustomerDao
+import com.example.commovmanageit.db.dao.LogsDao
 import com.example.commovmanageit.db.dao.MediaDao
 import com.example.commovmanageit.db.dao.PermissionDao
 import com.example.commovmanageit.db.dao.ProjectDao
@@ -19,6 +18,7 @@ import com.example.commovmanageit.db.dao.TaskDao
 import com.example.commovmanageit.db.dao.TaskUserDao
 import com.example.commovmanageit.db.dao.UserDao
 import com.example.commovmanageit.db.entities.Customer
+import com.example.commovmanageit.db.entities.Logs
 import com.example.commovmanageit.db.entities.Media
 import com.example.commovmanageit.db.entities.Permission
 import com.example.commovmanageit.db.entities.Project
@@ -28,6 +28,7 @@ import com.example.commovmanageit.db.entities.Role
 import com.example.commovmanageit.db.entities.Task
 import com.example.commovmanageit.db.entities.TaskUser
 import com.example.commovmanageit.db.entities.User
+import kotlinx.datetime.Instant
 
 @Database(
     entities = [
@@ -40,10 +41,11 @@ import com.example.commovmanageit.db.entities.User
         Task::class,
         TaskUser::class,
         Report::class,
-        Media::class
+        Media::class,
+        Logs::class
 
     ],
-    version = 2,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -58,6 +60,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun taskUserDao(): TaskUserDao
     abstract fun reportDao(): ReportDao
     abstract fun mediaDao(): MediaDao
+    abstract fun logsDao(): LogsDao
 
 
     companion object {
@@ -82,12 +85,12 @@ abstract class AppDatabase : RoomDatabase() {
 
 class Converters {
     @TypeConverter
-    fun fromTimestamp(value: Long?): Date? {
-        return value?.let { Date(it) }
+    fun fromTimestamp(value: Long?): Instant? {
+        return value?.let { Instant.fromEpochMilliseconds(it) }
     }
 
     @TypeConverter
-    fun dateToTimestamp(date: Date?): Long? {
-        return date?.time
+    fun instantToTimestamp(instant: Instant?): Long? {
+        return instant?.toEpochMilliseconds()
     }
 }

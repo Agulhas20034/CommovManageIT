@@ -3,7 +3,8 @@ package com.example.commovmanageit.db.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 @Entity(tableName = "customers")
 data class Customer(
@@ -14,13 +15,13 @@ data class Customer(
     @ColumnInfo(name = "email")
     val email: String,
     @ColumnInfo(name = "phone_number")
-    val phoneNumber: String?,
+    val phone_Number: String,
     @ColumnInfo(name = "created_at")
-    val createdAt: Date = Date(),
+    val createdAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "updated_at")
-    var updatedAt: Date = Date(),
+    var updatedAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "deleted_at")
-    var deletedAt: Date? = null,
+    var deletedAt: Instant? = null,
     @ColumnInfo(name = "is_synced", defaultValue = "0")
     val isSynced: Boolean = false,
     @ColumnInfo(name = "server_id")
