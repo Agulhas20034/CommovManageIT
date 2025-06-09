@@ -1,9 +1,13 @@
 package com.example.commovmanageit.remote
 
 import android.util.Log
+import com.example.commovmanageit.db.entities.User
 import com.example.commovmanageit.remote.dto.CustomerRemote
 import com.example.commovmanageit.remote.dto.LogsRemote
 import com.example.commovmanageit.remote.dto.PermissionRemote
+import com.example.commovmanageit.remote.dto.ProjectRemote
+import com.example.commovmanageit.remote.dto.RoleRemote
+import com.example.commovmanageit.remote.dto.UserRemote
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
@@ -77,6 +81,24 @@ object SupabaseManager {
         return response
     }
 
+    suspend inline fun <reified T : Any> insertRole(data: T): RoleRemote {
+        val response = client.postgrest["roles"].insert(data) { select() }.decodeSingle<RoleRemote>()
+        Log.d("RoleInsert", "Role inserido: $response")
+        return response
+    }
+
+    suspend inline fun <reified T : Any> insertUser(data: T): UserRemote {
+        val response = client.postgrest["users"].insert(data){ select() }.decodeSingle<UserRemote>()
+        Log.d("UserInsert", "User inserido: $response")
+        return response
+    }
+
+    suspend inline fun <reified T : Any> insertProject(data: T): ProjectRemote {
+        val response = client.postgrest["projects"].insert(data){ select() }.decodeSingle<ProjectRemote>()
+        Log.d("ProjectInsert", "Projeto inserido: $response")
+        return response
+    }
+
     suspend inline fun <reified T : Any> updateCustomer(id: String, data: CustomerRemote): CustomerRemote{
         client.postgrest["customers"].update({
             CustomerRemote::name setTo data.name
@@ -94,8 +116,45 @@ object SupabaseManager {
             PermissionRemote::label setTo data.label
             PermissionRemote::updated_at setTo Clock.System.now().toString()
         }) {
-            filter { CustomerRemote::id eq id }
+            filter { PermissionRemote::id eq id }
         }
         return fetchById("permissions",id)
+    }
+
+    suspend inline fun <reified T : Any> updateRole(id: String, data: RoleRemote): RoleRemote{
+        client.postgrest["roles"].update({
+            RoleRemote::name setTo data.name
+            RoleRemote::updated_at setTo Clock.System.now().toString()
+        }) {
+            filter { RoleRemote::id eq id }
+        }
+        return fetchById("roles",id)
+    }
+
+    suspend inline fun <reified T : Any> updateUser(id: String, data: UserRemote): UserRemote{
+        client.postgrest["users"].update({
+            UserRemote::role_id setTo data.role_id
+            UserRemote::email setTo data.email
+            UserRemote::password setTo data.password
+            UserRemote::daily_work_hours setTo data.daily_work_hours
+            UserRemote::updated_at setTo Clock.System.now().toString()
+        }) {
+            filter { UserRemote::id eq id }
+        }
+        return fetchById("users",id)
+    }
+
+    suspend inline fun <reified T : Any> updateProject(id: String, data: ProjectRemote): ProjectRemote{
+        client.postgrest["projects"].update({
+            ProjectRemote::name setTo data.name
+            ProjectRemote::daily_work_hours setTo data.daily_work_hours
+            ProjectRemote::customer_id setTo data.customer_id
+            ProjectRemote::user_id setTo data.user_id
+            ProjectRemote::hourly_rate setTo data.hourly_rate
+            ProjectRemote::updated_at setTo Clock.System.now().toString()
+        }) {
+            filter { ProjectRemote::id eq id }
+        }
+        return fetchById("projects",id)
     }
 }

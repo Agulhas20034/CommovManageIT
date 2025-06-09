@@ -46,7 +46,12 @@ class CustomerRepositoryTest(
 
         // Test insert
         var testCustomer = CustomerTestUtils.generateTestCustomer()
-        testCustomer = testCustomer.copy(email = "testlocal-${UUID.randomUUID().toString().substring(0, 8)}@example.com",name = "Test Local Customer ${UUID.randomUUID().toString().substring(0, 8)}")
+        testCustomer = testCustomer.copy(
+            email = "testlocal-${
+                UUID.randomUUID().toString().substring(0, 8)
+            }@example.com",
+            name = "Test Local Customer ${UUID.randomUUID().toString().substring(0, 8)}"
+        )
         val inserted = repository.insertLocal(testCustomer)
         logTestResult("Insert", inserted.id == testCustomer.id)
 
@@ -63,10 +68,10 @@ class CustomerRepositoryTest(
         }
 
         // Test delete
-        repository.deleteLocal(inserted.id,"Test")
+        repository.deleteLocal(inserted.id, "Test")
         val afterDelete = repository.getByIdLocal(inserted.id)
         logTestResult("Delete", afterDelete?.deletedAt != null)
-        val updated:Customer = updatedCustomer?.copy(
+        val updated: Customer = updatedCustomer?.copy(
             updatedAt = inserted.updatedAt,
             isSynced = true
         ) ?: inserted.copy(
@@ -75,7 +80,7 @@ class CustomerRepositoryTest(
         )
         repository.updateRemote(updated)
         // Clean up
-        repository.deleteLocal(inserted.id,"Real")
+        repository.deleteLocal(inserted.id, "Real")
         repository.deleteRemote(inserted.id)
     }
 
@@ -88,7 +93,11 @@ class CustomerRepositoryTest(
 
         Log.d("RepositoryTest", "-- Testing Repository Remote Operations --")
 
-        val testCustomer = CustomerTestUtils.generateTestCustomer("repo-test-${UUID.randomUUID().toString().substring(0, 8)}")
+        val testCustomer = CustomerTestUtils.generateTestCustomer(
+            "repo-test-${
+                UUID.randomUUID().toString().substring(0, 8)
+            }"
+        )
         CustomerTestUtils.printCustomer(testCustomer, "Generated Test Customer")
 
         try {
@@ -123,8 +132,11 @@ class CustomerRepositoryTest(
                     phone_Number = "999-${(1000..9999).random()}"
                 )
                 Log.d("RepositoryTest", "Attempting repository.updateRemote()")
-                val remotecustomer= repository.updateRemote(updatedCustomer)
-                Log.d("RepositoryTest", "✅ Success - updateRemote completed, user updated_at: ${remotecustomer.updated_at}")
+                val remotecustomer = repository.updateRemote(updatedCustomer)
+                Log.d(
+                    "RepositoryTest",
+                    "✅ Success - updateRemote completed, user updated_at: ${remotecustomer.updated_at}"
+                )
             }
 
             // Test repository's deleteRemote
@@ -135,27 +147,33 @@ class CustomerRepositoryTest(
 
                 // Verify deletion
                 val deletedCustomer = repository.getByIdRemote(id)
-                if (deletedCustomer == null ) {
+                if (deletedCustomer == null) {
                     Log.d("RepositoryTest", "✅ Verification - customer successfully deleted")
                 } else {
                     Log.e("RepositoryTest", "❌ Verification - customer still exists after deletion")
                 }
             }
 
-        }catch (e: Exception) {
-                Log.e("RepositoryTest", "❌ Repository remote operation failed", e)
+        } catch (e: Exception) {
+            Log.e("RepositoryTest", "❌ Repository remote operation failed", e)
 
-                when {
-                    e is IOException ->
-                        Log.e("RepositoryTest", "Network connection failed")
-                    e is ResponseException ->
-                        Log.e("RepositoryTest", "Supabase request failed: ${e.response.status.value} ${e.response.status.description}")
-                    e.message?.contains("violates unique constraint") == true ->
-                        Log.e("RepositoryTest", "Duplicate data error")
-                    else ->
-                        Log.e("RepositoryTest", "Unexpected error: ${e.javaClass.simpleName}")
-                }
+            when {
+                e is IOException ->
+                    Log.e("RepositoryTest", "Network connection failed")
+
+                e is ResponseException ->
+                    Log.e(
+                        "RepositoryTest",
+                        "Supabase request failed: ${e.response.status.value} ${e.response.status.description}"
+                    )
+
+                e.message?.contains("violates unique constraint") == true ->
+                    Log.e("RepositoryTest", "Duplicate data error")
+
+                else ->
+                    Log.e("RepositoryTest", "Unexpected error: ${e.javaClass.simpleName}")
             }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -168,8 +186,10 @@ class CustomerRepositoryTest(
         Log.d("RepositoryTest", "-- Testing Sync Operations --")
 
         // Create unsynced local records
-        val unsyncedCustomer1 = CustomerTestUtils.generateTestCustomer("customer1").copy(isSynced = false)
-        val unsyncedCustomer2 = CustomerTestUtils.generateTestCustomer("customer2").copy(isSynced = false)
+        val unsyncedCustomer1 =
+            CustomerTestUtils.generateTestCustomer("customer1").copy(isSynced = false)
+        val unsyncedCustomer2 =
+            CustomerTestUtils.generateTestCustomer("customer2").copy(isSynced = false)
         repository.insertLocal(unsyncedCustomer1)
         repository.insertLocal(unsyncedCustomer2)
 
@@ -179,8 +199,10 @@ class CustomerRepositoryTest(
         // Verify sync - now we should have serverId populated
         val afterSync1 = repository.getByIdLocal(unsyncedCustomer1.id)
         val afterSync2 = repository.getByIdLocal(unsyncedCustomer2.id)
-        logTestResult("Sync Created Items",
-            afterSync1?.serverId != null && afterSync2?.serverId != null)
+        logTestResult(
+            "Sync Created Items",
+            afterSync1?.serverId != null && afterSync2?.serverId != null
+        )
 
         // Clean up
         afterSync1?.let { repository.deleteRemote(it.serverId!!) }
@@ -191,7 +213,11 @@ class CustomerRepositoryTest(
 
     private suspend fun testObservationFlows() {
         Log.d("RepositoryTest", "-- Testing Observation Flows --")
-        val testCustomer2 = CustomerTestUtils.generateTestCustomer("ObservationTestAll-${UUID.randomUUID().toString().substring(0, 8)}")
+        val testCustomer2 = CustomerTestUtils.generateTestCustomer(
+            "ObservationTestAll-${
+                UUID.randomUUID().toString().substring(0, 8)
+            }"
+        )
         repository.insertLocal(testCustomer2)
         // Test observeAllActive
         val activeFlow = repository.observeAllActive()
@@ -199,15 +225,19 @@ class CustomerRepositoryTest(
         logTestResult("ObserveAllActive", activeCustomers.isNotEmpty())
 
         // Test observeById
-        val testCustomer = CustomerTestUtils.generateTestCustomer("ObservationTest-${UUID.randomUUID().toString().substring(0, 8)}")
+        val testCustomer = CustomerTestUtils.generateTestCustomer(
+            "ObservationTest-${
+                UUID.randomUUID().toString().substring(0, 8)
+            }"
+        )
         repository.insertLocal(testCustomer)
         val byIdFlow = repository.observeById(testCustomer.id)
         val observedCustomer = byIdFlow.first()
         logTestResult("ObserveById", observedCustomer?.id == testCustomer.id)
 
         // Clean up
-        repository.deleteLocal(testCustomer.id,"Real")
-        repository.deleteLocal(testCustomer2.id,"Real")
+        repository.deleteLocal(testCustomer.id, "Real")
+        repository.deleteLocal(testCustomer2.id, "Real")
         repository.deleteRemote(testCustomer.id)
         repository.deleteRemote(testCustomer2.id)
 
@@ -217,14 +247,18 @@ class CustomerRepositoryTest(
         Log.d("RepositoryTest", "-- Testing Search Operations --")
 
         // Test search by name
-        val searchCustomer = CustomerTestUtils.generateTestCustomer("TestSearch.${UUID.randomUUID().toString().substring(0, 8)}")
+        val searchCustomer = CustomerTestUtils.generateTestCustomer(
+            "TestSearch.${
+                UUID.randomUUID().toString().substring(0, 8)
+            }"
+        )
         repository.insertLocal(searchCustomer)
 
         val searchResults = repository.searchByName("TestSearch")
         logTestResult("Search by Name", searchResults.any { it.name.contains("TestSearch") })
 
         // Clean up
-        repository.deleteLocal(searchCustomer.id,"Real")
+        repository.deleteLocal(searchCustomer.id, "Real")
         repository.deleteRemote(searchCustomer.id)
     }
 
@@ -234,7 +268,11 @@ class CustomerRepositoryTest(
         val initialActiveCount = repository.getActiveCount()
 
         // Add test data
-        val testCustomer = CustomerTestUtils.generateTestCustomer("TestCount.${UUID.randomUUID().toString().substring(0, 8)}")
+        val testCustomer = CustomerTestUtils.generateTestCustomer(
+            "TestCount.${
+                UUID.randomUUID().toString().substring(0, 8)
+            }"
+        )
         repository.insertLocal(testCustomer)
 
         val afterInsertActiveCount = repository.getActiveCount()
@@ -255,9 +293,16 @@ class CustomerRepositoryTest(
 
         // Teste remoto (com internet)
         if (connectivityMonitor.isConnected) {
-            val remoteCustomer = CustomerTestUtils.generateTestCustomer("RemoteTest-${UUID.randomUUID().toString().substring(0, 8)}")
+            val remoteCustomer = CustomerTestUtils.generateTestCustomer(
+                "RemoteTest-${
+                    UUID.randomUUID().toString().substring(0, 8)
+                }"
+            )
             val insertedRemote = repository.insert(remoteCustomer)
-            logTestResult("Insert remoto", insertedRemote.isSynced && insertedRemote.serverId != null)
+            logTestResult(
+                "Insert remoto",
+                insertedRemote.isSynced && insertedRemote.serverId != null
+            )
 
             val updatedRemote = insertedRemote.copy(name = "Remoto Atualizado")
             repository.update(updatedRemote)
@@ -272,7 +317,10 @@ class CustomerRepositoryTest(
         }
 
         // Delay para desconectar a internet manualmente
-        Log.d("RepositoryTest", "Desconecte a internet agora para testar operações locais. Aguardando 30 segundos...")
+        Log.d(
+            "RepositoryTest",
+            "Desconecte a internet agora para testar operações locais. Aguardando 30 segundos..."
+        )
         kotlinx.coroutines.delay(30_000)
 
         // Limpa localmente se já existir
@@ -293,17 +341,24 @@ class CustomerRepositoryTest(
         val deletedLocal = repository.getByIdLocal(insertedLocal.id)
         logTestResult("Delete local", deletedLocal?.deletedAt != null)
 
-        val localCustomer2 = CustomerTestUtils.generateTestCustomer(UUID.randomUUID().toString().substring(0, 8))
+        val localCustomer2 =
+            CustomerTestUtils.generateTestCustomer(UUID.randomUUID().toString().substring(0, 8))
         val insertedLocal2 = repository.insert(localCustomer2)
         logTestResult("Insert local", !insertedLocal.isSynced)
-
         // Reconecte a internet e sincronize
-        Log.d("RepositoryTest", "Reconecte a internet para testar sincronização. Aguardando 30 segundos...")
+        Log.d(
+            "RepositoryTest",
+            "Reconecte a internet para testar sincronização. Aguardando 30 segundos..."
+        )
         kotlinx.coroutines.delay(30_000)
 
         repository.syncChanges()
         val syncedCustomer = repository.getByIdLocal(insertedLocal2.id)
-        logTestResult("Sync após reconexão", syncedCustomer?.serverId != null && syncedCustomer.isSynced)
+        repository.delete(insertedLocal2.id)
+        logTestResult(
+            "Sync após reconexão",
+            syncedCustomer?.serverId != null && syncedCustomer.isSynced
+        )
 
 
     }

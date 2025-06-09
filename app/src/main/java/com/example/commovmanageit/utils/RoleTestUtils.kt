@@ -9,13 +9,13 @@ object RoleTestUtils {
     fun generateTestRole(prefix: String = ""): Role {
         return Role(
             id = UUID.randomUUID().toString(),
-            permissionId = "perm_$prefix",
+            permissionId = "1",
             name = "Role_$prefix",
             createdAt = Clock.System.now(),
             updatedAt = Clock.System.now(),
             deletedAt = null,
             isSynced = false,
-            serverId = null
+            //serverId = null
         )
     }
 

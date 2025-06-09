@@ -44,7 +44,6 @@ class LogRepository(
 
     suspend fun deleteLocal(logs:Logs) {
         logDao.delete(logs)
-        syncIfConnected()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

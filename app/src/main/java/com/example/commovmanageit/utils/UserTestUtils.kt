@@ -10,7 +10,7 @@ object UserTestUtils {
     fun generateTestUser(prefix: String = ""): User {
         return User(
             id = UUID.randomUUID().toString(),
-            roleId = "role_$prefix",
+            roleId = "1",
             email = "user_$prefix@example.com",
             password = "senha_$prefix",
             dailyWorkHours = Random.nextInt(4, 10),

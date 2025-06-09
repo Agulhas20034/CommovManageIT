@@ -24,7 +24,8 @@ fun RoleRemote.toLocal() = Role(
     name = name,
     createdAt = parseDateTimeString(created_at),
     updatedAt = parseDateTimeString(updated_at),
-    deletedAt = deleted_at?.let { parseDateTimeString(it) }
+    deletedAt = deleted_at?.let { parseDateTimeString(it) } ,
+    isSynced = true
 )
 
 fun Role.toRemote() = RoleRemote(

@@ -27,7 +27,7 @@ interface CustomerDao {
     @Query("SELECT * FROM customers ORDER BY name ASC")
     suspend fun getAll(): List<Customer>
 
-    @Query("UPDATE customers SET deleted_at = :timestamp WHERE id = :id")
+    @Query("UPDATE customers SET deleted_at = :timestamp, is_synced=0 WHERE id = :id")
     suspend fun softDelete(id: String, timestamp: Instant = Clock.System.now())
 
     @Query("SELECT * FROM customers WHERE is_synced = 0 AND deleted_at IS NULL")

@@ -16,7 +16,7 @@ object LogsTestUtils {
             entityId = entityId,
             entityType = entityType,
             action = action,
-            userId = "user_$prefix",
+            userId = "1",
             oldValues = "{\"field\":\"oldValue\"}",
             newValues = "{\"field\":\"newValue\"}",
             createdAt = Clock.System.now(),

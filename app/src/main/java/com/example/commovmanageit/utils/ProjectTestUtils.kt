@@ -8,8 +8,8 @@ import kotlin.random.Random
 object ProjectTestUtils {
     fun generateTestProject(
         prefix: String = "",
-        userId: String? = UUID.randomUUID().toString(),
-        customerId: String? = UUID.randomUUID().toString(),
+        userId: String? = "1",
+        customerId: String? = "1",
         name: String = "TestProject_$prefix",
         hourlyRate: Float? = Random.nextFloat() * 100,
         dailyWorkHours: Int? = Random.nextInt(4, 10)

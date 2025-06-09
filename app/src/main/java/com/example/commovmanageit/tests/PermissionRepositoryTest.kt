@@ -26,10 +26,10 @@ class PermissionRepositoryTest(
             try {
                 Log.d("PermissionRepositoryTest", "=== Iniciando Testes de Permissão ===")
                 repository.clearLocalDatabase()
-               /* testLocalOperations()
+                testLocalOperations()
                 repository.syncChanges()
-                testRemoteOperations()*/
-                testInsertUpdateDeleteFunctions()
+                testRemoteOperations()
+                //testInsertUpdateDeleteFunctions()
                 repository.clearLocalDatabase()
                 Log.d("PermissionRepositoryTest", "=== Todos os Testes de Permissão Finalizados ===")
             } catch (e: Exception) {
@@ -141,7 +141,7 @@ class PermissionRepositoryTest(
             val fetchedRemote = repository.getByIdRemote(updatedRemote.serverId!!)
             logTestResult("Update Remoto", fetchedRemote?.label == "Remoto Atualizado")
 
-            repository.delete(insertedRemote.id)
+            repository.deleteRemote(insertedRemote.id)
             val deletedRemote = repository.getByIdRemote(insertedRemote.serverId!!)
             logTestResult("Delete Remoto", deletedRemote == null)
         } else {
