@@ -81,6 +81,7 @@ class RoleRepository(
             try {
                 val serverId = newRole.id
                 val syncedRole = newRole.copy(isSynced = true, serverId = serverId)
+                insertRemote(syncedRole)
                 insertLocal(syncedRole)
                 syncedRole
             } catch (e: Exception) {

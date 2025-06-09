@@ -87,6 +87,7 @@ class CustomerRepository(
                 val syncedCustomer = newCustomer.copy(isSynced = true, serverId = serverId)
                 insertRemote(syncedCustomer)
                 insertLocal(syncedCustomer)
+
                 syncedCustomer
             } catch (e: Exception) {
                 customerDao.insert(newCustomer)

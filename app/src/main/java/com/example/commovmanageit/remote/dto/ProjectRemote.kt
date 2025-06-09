@@ -30,7 +30,9 @@ fun ProjectRemote.toLocal() = Project(
     dailyWorkHours = daily_work_hours,
     createdAt = parseDateTimeString(created_at),
     updatedAt = parseDateTimeString(updated_at),
-    deletedAt = deleted_at?.let { parseDateTimeString(it) }
+    deletedAt = deleted_at?.let { parseDateTimeString(it) },
+    serverId = id,
+    isSynced = true
 )
 
 fun Project.toRemote() = ProjectRemote(

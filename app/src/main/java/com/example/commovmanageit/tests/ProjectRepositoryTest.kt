@@ -304,7 +304,7 @@ class ProjectRepositoryTest(
                 logTestResult("Update remoto", updatedRemote.isSynced)
                 val fetchedRemote = repository.getByIdRemote(updatedRemote.id)
                 logTestResult("Update remoto", fetchedRemote?.name == "Remoto Atualizado")
-
+                Log.d("RepositoryTest", "Tentando deletar remoto com ID: ${insertedRemote.serverId}")
                 repository.delete(insertedRemote.id)
                 val deletedRemote = repository.getByIdRemote(insertedRemote.serverId!!)
                 logTestResult("Delete remoto", deletedRemote == null)

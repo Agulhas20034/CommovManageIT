@@ -72,13 +72,13 @@ class ProjectRepository(
     }
 
     suspend fun deleteRemote(id: String) {
-        SupabaseManager.delete("Projects", id)
+        SupabaseManager.delete("projects", id)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun insert(Project: Project): Project {
-        val newProject = Project.copy(
-            id = Project.id.ifEmpty { UUID.randomUUID().toString() },
+    suspend fun insert(project: Project): Project {
+        val newProject = project.copy(
+            id = project.id.ifEmpty { UUID.randomUUID().toString() },
             updatedAt = Clock.System.now()
         )
 
@@ -86,6 +86,7 @@ class ProjectRepository(
             try {
                 val serverId = newProject.id
                 val syncedProject = newProject.copy(isSynced = true, serverId = serverId)
+                Log.d("ProjectRepository", "Inserting remote Project: ${syncedProject.serverId}")
                 insertRemote(syncedProject)
                 insertLocal(syncedProject)
                 syncedProject
@@ -111,7 +112,7 @@ class ProjectRepository(
                     ProjectDao.update(updatedProject.copy(isSynced = true))
                 } else {
                     val serverId = insertRemote(updatedProject)
-                    ProjectDao.update(updatedProject.copy(isSynced = true, serverId = serverId))
+                    ProjectDao.update(updatedProject.copy(isSynced = true))
                 }
             } catch (e: Exception) {
                 ProjectDao.update(updatedProject)
@@ -124,17 +125,12 @@ class ProjectRepository(
     suspend fun delete(id: String) {
         try {
             val project = ProjectDao.getById(id)
-            if (project == null) {
-                throw Exception("Project with ID $id not found")
-            }else {
-                Log.d("Delete atempt: ","Project with ID $id found")
-            }
             project?.let {
                 ProjectDao.softDelete(it.id)
-                Log.d("ProjectRepository", "Soft deleting Project: ${it.serverId}")
+                Log.d("ProjectRepository", "Soft deleting Project: ${it.serverId}, for id $id")
                 if (it.serverId != null && connectivityMonitor.isConnected) {
                     Log.d("ProjectRepository", "Deleting remote Project: ${it.id}")
-                    deleteRemote(it.serverId)
+                    deleteRemote(it.serverId!!)
                     ProjectDao.updateSyncStatus(id, true)
                 }
             } ?: throw Exception("Project not found")
