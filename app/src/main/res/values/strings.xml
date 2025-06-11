@@ -58,4 +58,6 @@
     <string name="edit">Edit</string>
     <string name="edit_projects">Edit Project Info</string>
     <string name="Create_Task">Create Task</string>
+    <string name="fill_all_fields">Fill all fields</string>
+    <string name="invalid_login">Invalid Login</string>
 </resources>

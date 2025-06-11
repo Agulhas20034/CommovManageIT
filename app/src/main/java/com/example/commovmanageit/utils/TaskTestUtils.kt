@@ -10,11 +10,11 @@ object TaskTestUtils {
     fun generateTestTask(prefix: String = ""): Task {
         return Task(
             id = UUID.randomUUID().toString(),
-            projectId = "project_$prefix",
+            projectId = "1",
             name = "Task_$prefix",
             description = "Descrição de teste $prefix",
             hourlyRate = Random.nextFloat() * 100,
-            status = "pending",
+            status = "open",
             createdAt = Clock.System.now(),
             updatedAt = Clock.System.now(),
             deletedAt = null,

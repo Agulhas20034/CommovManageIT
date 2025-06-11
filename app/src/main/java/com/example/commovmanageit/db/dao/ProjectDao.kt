@@ -42,7 +42,7 @@ interface ProjectDao {
     @Query("UPDATE projects SET is_synced = :isSynced, server_id = :serverId WHERE id = :id")
     suspend fun updateSyncInfo(id: String, isSynced: Boolean, serverId: String?)
 
-    @Query("UPDATE projects SET deleted_at = :timestamp WHERE id = :id")
+    @Query("UPDATE projects SET deleted_at = :timestamp,is_synced=0 WHERE id = :id")
     suspend fun softDelete(id: String, timestamp: Instant = Clock.System.now())
 
     @Query("SELECT * FROM projects WHERE created_at >= :since AND deleted_at IS NULL ORDER BY created_at DESC")

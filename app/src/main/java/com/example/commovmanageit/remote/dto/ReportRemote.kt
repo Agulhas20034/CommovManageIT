@@ -24,7 +24,9 @@ fun ReportRemote.toLocal() = Report(
     projectId = project_id,
     createdAt = parseDateTimeString(created_at),
     updatedAt = parseDateTimeString(updated_at),
-    deletedAt = deleted_at?.let { parseDateTimeString(deleted_at) }
+    deletedAt = deleted_at?.let { parseDateTimeString(deleted_at) },
+    isSynced = true,
+    serverId = id
 )
 
 fun Report.toRemote() = ReportRemote(

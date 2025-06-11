@@ -34,7 +34,9 @@ fun ProjectUserRemote.toLocal() = ProjectUser(
     status = status,
     createdAt = parseDateTimeString(created_at),
     updatedAt = parseDateTimeString(updated_at),
-    deletedAt = deleted_at?.let { parseDateTimeString(it) }
+    deletedAt = deleted_at?.let { parseDateTimeString(it) },
+    isSynced = true,
+    serverId = id
 )
 
 fun ProjectUser.toRemote() = ProjectUserRemote(

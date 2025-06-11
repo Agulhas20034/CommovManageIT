@@ -3,9 +3,9 @@ package com.example.commovmanageit.db.repositories
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.commovmanageit.db.entities.Customer
+import com.example.commovmanageit.db.entities.TaskUser
 import com.example.commovmanageit.remote.dto.toLocal
-import com.example.commovmanageit.utils.CustomerTestUtils
+import com.example.commovmanageit.utils.TaskUserTestUtils
 import com.example.commovmanageit.utils.ConnectivityMonitor
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
 @RequiresApi(Build.VERSION_CODES.O)
-class CustomerRepositoryTest(
-    private val repository: CustomerRepository,
+class TaskUserRepositoryTest(
+    private val repository: TaskUserRepository,
     private val connectivityMonitor: ConnectivityMonitor
 ) {
     private val testScope = CoroutineScope(Dispatchers.IO)
@@ -45,21 +45,21 @@ class CustomerRepositoryTest(
 
         // Teste remoto (com internet)
         if (connectivityMonitor.isConnected) {
-            val remoteCustomer = CustomerTestUtils.generateTestCustomer(
+            val remoteTaskUser = TaskUserTestUtils.generateTestTaskUser(
                 "RemoteTest-${
                     UUID.randomUUID().toString().substring(0, 8)
                 }"
             )
-            val insertedRemote = repository.insert(remoteCustomer)
+            val insertedRemote = repository.insert(remoteTaskUser)
             logTestResult(
                 "Insert remoto",
                 insertedRemote.isSynced && insertedRemote.serverId != null
             )
 
-            val updatedRemote = insertedRemote.copy(name = "Remoto Atualizado")
+            val updatedRemote = insertedRemote.copy(timeUsed = 0f)
             repository.update(updatedRemote)
             val fetchedRemote = repository.getByIdRemote(updatedRemote.serverId!!)
-            logTestResult("Update remoto", fetchedRemote?.name == "Remoto Atualizado")
+            logTestResult("Update remoto", fetchedRemote?.time_used == 0f)
 
             repository.delete(insertedRemote.id)
             val deletedRemote = repository.getByIdRemote(insertedRemote.serverId!!)
@@ -80,22 +80,22 @@ class CustomerRepositoryTest(
         repository.deleteLocal(localTestId, "Real")
 
         // Teste local (sem internet)
-        val localCustomer = CustomerTestUtils.generateTestCustomer(localTestId)
-        val insertedLocal = repository.insert(localCustomer)
+        val localTaskUser = TaskUserTestUtils.generateTestTaskUser(localTestId)
+        val insertedLocal = repository.insert(localTaskUser)
         logTestResult("Insert local", !insertedLocal.isSynced)
 
-        val updatedLocal = insertedLocal.copy(name = "Local Atualizado")
+        val updatedLocal = insertedLocal.copy(timeUsed = 1f)
         repository.update(updatedLocal)
         val fetchedLocal = repository.getByIdLocal(insertedLocal.id)
-        logTestResult("Update local", fetchedLocal?.name == "Local Atualizado")
+        logTestResult("Update local", fetchedLocal?.timeUsed== 1f)
 
         repository.delete(insertedLocal.id)
         val deletedLocal = repository.getByIdLocal(insertedLocal.id)
         logTestResult("Delete local", deletedLocal?.deletedAt != null)
 
-        val localCustomer2 =
-            CustomerTestUtils.generateTestCustomer(UUID.randomUUID().toString().substring(0, 8))
-        val insertedLocal2 = repository.insert(localCustomer2)
+        val localTaskUser2 =
+            TaskUserTestUtils.generateTestTaskUser(UUID.randomUUID().toString().substring(0, 8))
+        val insertedLocal2 = repository.insert(localTaskUser2)
         logTestResult("Insert local", !insertedLocal.isSynced)
         // Reconecte a internet e sincronize
         Log.d(
@@ -105,11 +105,11 @@ class CustomerRepositoryTest(
         kotlinx.coroutines.delay(30_000)
 
         repository.syncChanges()
-        val syncedCustomer = repository.getByIdLocal(insertedLocal2.id)
+        val syncedTaskUser = repository.getByIdLocal(insertedLocal2.id)
         repository.delete(insertedLocal2.id)
         logTestResult(
             "Sync após reconexão",
-            syncedCustomer?.serverId != null && syncedCustomer.isSynced
+            syncedTaskUser?.serverId != null && syncedTaskUser.isSynced
         )
 
 

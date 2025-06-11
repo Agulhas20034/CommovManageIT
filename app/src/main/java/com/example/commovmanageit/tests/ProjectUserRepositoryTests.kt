@@ -3,9 +3,9 @@ package com.example.commovmanageit.db.repositories
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.commovmanageit.db.entities.Customer
+import com.example.commovmanageit.db.entities.ProjectUser
 import com.example.commovmanageit.remote.dto.toLocal
-import com.example.commovmanageit.utils.CustomerTestUtils
+import com.example.commovmanageit.utils.ProjectUserTestUtils
 import com.example.commovmanageit.utils.ConnectivityMonitor
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
 @RequiresApi(Build.VERSION_CODES.O)
-class CustomerRepositoryTest(
-    private val repository: CustomerRepository,
+class ProjectUserRepositoryTest(
+    private val repository: ProjectUserRepository,
     private val connectivityMonitor: ConnectivityMonitor
 ) {
     private val testScope = CoroutineScope(Dispatchers.IO)
@@ -26,6 +26,12 @@ class CustomerRepositoryTest(
             try {
                 Log.d("RepositoryTest", "=== Starting Tests ===")
                 repository.clearLocalDatabase()
+                /*testLocalOperations()
+                testRemoteOperations()
+                testSyncOperations()
+                testObservationFlows()
+                testSearchOperations()
+                testCountOperations()*/
                 testInsertUpdateDeleteFunctions()
                 repository.clearLocalDatabase()
                 Log.d("RepositoryTest", "=== All Tests Completed ===")
@@ -45,21 +51,21 @@ class CustomerRepositoryTest(
 
         // Teste remoto (com internet)
         if (connectivityMonitor.isConnected) {
-            val remoteCustomer = CustomerTestUtils.generateTestCustomer(
+            val remoteProjectUser = ProjectUserTestUtils.generateTestProjectUser(
                 "RemoteTest-${
                     UUID.randomUUID().toString().substring(0, 8)
                 }"
             )
-            val insertedRemote = repository.insert(remoteCustomer)
+            val insertedRemote = repository.insert(remoteProjectUser)
             logTestResult(
                 "Insert remoto",
                 insertedRemote.isSynced && insertedRemote.serverId != null
             )
 
-            val updatedRemote = insertedRemote.copy(name = "Remoto Atualizado")
+            val updatedRemote = insertedRemote.copy()
             repository.update(updatedRemote)
             val fetchedRemote = repository.getByIdRemote(updatedRemote.serverId!!)
-            logTestResult("Update remoto", fetchedRemote?.name == "Remoto Atualizado")
+            logTestResult("Update remoto", fetchedRemote?.user_id == updatedRemote.id)
 
             repository.delete(insertedRemote.id)
             val deletedRemote = repository.getByIdRemote(insertedRemote.serverId!!)
@@ -80,22 +86,22 @@ class CustomerRepositoryTest(
         repository.deleteLocal(localTestId, "Real")
 
         // Teste local (sem internet)
-        val localCustomer = CustomerTestUtils.generateTestCustomer(localTestId)
-        val insertedLocal = repository.insert(localCustomer)
+        val localProjectUser = ProjectUserTestUtils.generateTestProjectUser(localTestId)
+        val insertedLocal = repository.insert(localProjectUser)
         logTestResult("Insert local", !insertedLocal.isSynced)
 
-        val updatedLocal = insertedLocal.copy(name = "Local Atualizado")
+        val updatedLocal = insertedLocal.copy()
         repository.update(updatedLocal)
         val fetchedLocal = repository.getByIdLocal(insertedLocal.id)
-        logTestResult("Update local", fetchedLocal?.name == "Local Atualizado")
+        logTestResult("Update local", fetchedLocal?.updatedAt != updatedLocal.createdAt)
 
         repository.delete(insertedLocal.id)
         val deletedLocal = repository.getByIdLocal(insertedLocal.id)
         logTestResult("Delete local", deletedLocal?.deletedAt != null)
 
-        val localCustomer2 =
-            CustomerTestUtils.generateTestCustomer(UUID.randomUUID().toString().substring(0, 8))
-        val insertedLocal2 = repository.insert(localCustomer2)
+        val localProjectUser2 =
+            ProjectUserTestUtils.generateTestProjectUser(UUID.randomUUID().toString().substring(0, 8))
+        val insertedLocal2 = repository.insert(localProjectUser2)
         logTestResult("Insert local", !insertedLocal.isSynced)
         // Reconecte a internet e sincronize
         Log.d(
@@ -105,11 +111,11 @@ class CustomerRepositoryTest(
         kotlinx.coroutines.delay(30_000)
 
         repository.syncChanges()
-        val syncedCustomer = repository.getByIdLocal(insertedLocal2.id)
+        val syncedProjectUser = repository.getByIdLocal(insertedLocal2.id)
         repository.delete(insertedLocal2.id)
         logTestResult(
             "Sync após reconexão",
-            syncedCustomer?.serverId != null && syncedCustomer.isSynced
+            syncedProjectUser?.serverId != null && syncedProjectUser.isSynced
         )
 
 

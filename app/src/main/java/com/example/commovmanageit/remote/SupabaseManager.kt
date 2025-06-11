@@ -1,12 +1,18 @@
 package com.example.commovmanageit.remote
 
 import android.util.Log
+import com.example.commovmanageit.db.entities.Media
 import com.example.commovmanageit.db.entities.User
 import com.example.commovmanageit.remote.dto.CustomerRemote
 import com.example.commovmanageit.remote.dto.LogsRemote
+import com.example.commovmanageit.remote.dto.MediaRemote
 import com.example.commovmanageit.remote.dto.PermissionRemote
 import com.example.commovmanageit.remote.dto.ProjectRemote
+import com.example.commovmanageit.remote.dto.ProjectUserRemote
+import com.example.commovmanageit.remote.dto.ReportRemote
 import com.example.commovmanageit.remote.dto.RoleRemote
+import com.example.commovmanageit.remote.dto.TaskRemote
+import com.example.commovmanageit.remote.dto.TaskUserRemote
 import com.example.commovmanageit.remote.dto.UserRemote
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -51,6 +57,12 @@ object SupabaseManager {
     suspend inline fun <reified T : Any> fetchById(table: String, id: String): T {
         return client.postgrest[table].select {
             filter { eq("id", id) }
+        }.decodeSingle()
+    }
+
+    suspend inline fun <reified T : Any> fetchByEmail(table: String, email: String): T {
+        return client.postgrest[table].select {
+            filter { eq("email", email) }
         }.decodeSingle()
     }
 
@@ -99,12 +111,42 @@ object SupabaseManager {
         return response
     }
 
+    suspend inline fun <reified T : Any> insertProjectUser(data: T): ProjectUserRemote {
+        val response = client.postgrest["project_users"].insert(data){ select() }.decodeSingle<ProjectUserRemote>()
+        Log.d("ProjectUserInsert", "ProjectUser inserido: $response")
+        return response
+    }
+
+    suspend inline fun <reified T : Any> insertMedia(data: T): MediaRemote {
+        val response = client.postgrest["media"].insert(data){ select() }.decodeSingle<MediaRemote>()
+        Log.d("MediaInsert", "Media inserida: $response")
+        return response
+    }
+
+    suspend inline fun <reified T : Any> insertReport(data: T): ReportRemote {
+        val response = client.postgrest["reports"].insert(data){ select() }.decodeSingle<ReportRemote>()
+        Log.d("ReportInsert", "Report inserido: $response")
+        return response
+    }
+
+    suspend inline fun <reified T : Any> insertTask(data: T): TaskRemote {
+        val response = client.postgrest["tasks"].insert(data){ select() }.decodeSingle<TaskRemote>()
+        Log.d("TaskInsert", "Task inserido: $response")
+        return response
+    }
+
+    suspend inline fun <reified T : Any> insertTaskUser(data: T): TaskUserRemote {
+        val response = client.postgrest["task_users"].insert(data){ select() }.decodeSingle<TaskUserRemote>()
+        Log.d("TaskUserInsert", "TaskUser inserido: $response")
+        return response
+    }
     suspend inline fun <reified T : Any> updateCustomer(id: String, data: CustomerRemote): CustomerRemote{
         client.postgrest["customers"].update({
             CustomerRemote::name setTo data.name
             CustomerRemote::email setTo data.email
             CustomerRemote::phone_number setTo data.phone_number
             CustomerRemote::updated_at setTo Clock.System.now().toString()
+            CustomerRemote::deleted_at setTo data.deleted_at
         }) {
             filter { CustomerRemote::id eq id }
         }
@@ -115,6 +157,8 @@ object SupabaseManager {
         client.postgrest["permissions"].update({
             PermissionRemote::label setTo data.label
             PermissionRemote::updated_at setTo Clock.System.now().toString()
+            PermissionRemote::deleted_at setTo data.deleted_at
+
         }) {
             filter { PermissionRemote::id eq id }
         }
@@ -125,6 +169,8 @@ object SupabaseManager {
         client.postgrest["roles"].update({
             RoleRemote::name setTo data.name
             RoleRemote::updated_at setTo Clock.System.now().toString()
+            RoleRemote::deleted_at setTo data.deleted_at
+
         }) {
             filter { RoleRemote::id eq id }
         }
@@ -138,6 +184,8 @@ object SupabaseManager {
             UserRemote::password setTo data.password
             UserRemote::daily_work_hours setTo data.daily_work_hours
             UserRemote::updated_at setTo Clock.System.now().toString()
+            UserRemote::deleted_at setTo data.deleted_at
+
         }) {
             filter { UserRemote::id eq id }
         }
@@ -152,9 +200,78 @@ object SupabaseManager {
             ProjectRemote::user_id setTo data.user_id
             ProjectRemote::hourly_rate setTo data.hourly_rate
             ProjectRemote::updated_at setTo Clock.System.now().toString()
+            ProjectRemote::deleted_at setTo data.deleted_at
         }) {
             filter { ProjectRemote::id eq id }
         }
         return fetchById("projects",id)
+    }
+
+    suspend inline fun <reified T : Any> updateProjectUser(id: String, data: ProjectUserRemote): ProjectUserRemote{
+        client.postgrest["customers"].update({
+            ProjectUserRemote::speed setTo data.speed
+            ProjectUserRemote::status setTo data.status
+            ProjectUserRemote::collaboration setTo data.collaboration
+            ProjectUserRemote::updated_at setTo Clock.System.now().toString()
+            ProjectUserRemote::quality setTo data.quality
+            ProjectUserRemote::deleted_at setTo data.deleted_at
+        }) {
+            filter { ProjectRemote::id eq id }
+        }
+        return fetchById("project_users",id)
+    }
+
+    suspend inline fun <reified T : Any> updateMedia(id: String, data: MediaRemote): MediaRemote{
+        client.postgrest["media"].update({
+            MediaRemote::name setTo data.name
+            MediaRemote::path setTo data.path
+            MediaRemote::type setTo data.type
+            MediaRemote::project_id setTo data.project_id
+            MediaRemote::report_id setTo data.report_id
+            MediaRemote::updated_at setTo Clock.System.now().toString()
+            MediaRemote::deleted_at setTo data.deleted_at
+        }) {
+            filter { MediaRemote::id eq id }
+        }
+        return fetchById("media",id)
+    }
+
+    suspend inline fun <reified T : Any> updateReport(id: String, data: ReportRemote): ReportRemote{
+        client.postgrest["reports"].update({
+            ReportRemote::updated_at setTo Clock.System.now().toString()
+            ReportRemote::deleted_at setTo data.deleted_at
+        }) {
+            filter { MediaRemote::id eq id }
+        }
+        return fetchById("reports",id)
+    }
+
+    suspend inline fun <reified T : Any> updateTask(id: String, data: TaskRemote): TaskRemote{
+        client.postgrest["tasks"].update({
+            TaskRemote::name setTo data.name
+            TaskRemote::description setTo data.description
+            TaskRemote::status setTo data.status
+            TaskRemote::hourly_rate setTo data.hourly_rate
+            ReportRemote::updated_at setTo Clock.System.now().toString()
+            ReportRemote::deleted_at setTo data.deleted_at
+        }) {
+            filter { TaskRemote::id eq id }
+        }
+        return fetchById("tasks",id)
+    }
+
+    suspend inline fun <reified T : Any> updateTaskUser(id: String, data: TaskUserRemote): TaskUserRemote{
+        client.postgrest["task_users"].update({
+            TaskUserRemote::start_date setTo data.start_date
+            TaskUserRemote::end_date setTo data.end_date
+            TaskUserRemote::conclusion_rate setTo data.conclusion_rate
+            TaskUserRemote::location setTo data.location
+            TaskUserRemote::time_used setTo data.time_used
+            ReportRemote::updated_at setTo Clock.System.now().toString()
+            ReportRemote::deleted_at setTo data.deleted_at
+        }) {
+            filter { TaskUserRemote::id eq id }
+        }
+        return fetchById("task_user",id)
     }
 }

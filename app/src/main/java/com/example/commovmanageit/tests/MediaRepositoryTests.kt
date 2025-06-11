@@ -3,9 +3,9 @@ package com.example.commovmanageit.db.repositories
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.commovmanageit.db.entities.Customer
+import com.example.commovmanageit.db.entities.Media
 import com.example.commovmanageit.remote.dto.toLocal
-import com.example.commovmanageit.utils.CustomerTestUtils
+import com.example.commovmanageit.utils.MediaTestUtils
 import com.example.commovmanageit.utils.ConnectivityMonitor
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
 @RequiresApi(Build.VERSION_CODES.O)
-class CustomerRepositoryTest(
-    private val repository: CustomerRepository,
+class MediaRepositoryTest(
+    private val repository: MediaRepository,
     private val connectivityMonitor: ConnectivityMonitor
 ) {
     private val testScope = CoroutineScope(Dispatchers.IO)
@@ -45,12 +45,12 @@ class CustomerRepositoryTest(
 
         // Teste remoto (com internet)
         if (connectivityMonitor.isConnected) {
-            val remoteCustomer = CustomerTestUtils.generateTestCustomer(
+            val remoteMedia = MediaTestUtils.generateTestMedia(
                 "RemoteTest-${
                     UUID.randomUUID().toString().substring(0, 8)
                 }"
             )
-            val insertedRemote = repository.insert(remoteCustomer)
+            val insertedRemote = repository.insert(remoteMedia)
             logTestResult(
                 "Insert remoto",
                 insertedRemote.isSynced && insertedRemote.serverId != null
@@ -80,8 +80,8 @@ class CustomerRepositoryTest(
         repository.deleteLocal(localTestId, "Real")
 
         // Teste local (sem internet)
-        val localCustomer = CustomerTestUtils.generateTestCustomer(localTestId)
-        val insertedLocal = repository.insert(localCustomer)
+        val localMedia = MediaTestUtils.generateTestMedia(localTestId)
+        val insertedLocal = repository.insert(localMedia)
         logTestResult("Insert local", !insertedLocal.isSynced)
 
         val updatedLocal = insertedLocal.copy(name = "Local Atualizado")
@@ -93,9 +93,9 @@ class CustomerRepositoryTest(
         val deletedLocal = repository.getByIdLocal(insertedLocal.id)
         logTestResult("Delete local", deletedLocal?.deletedAt != null)
 
-        val localCustomer2 =
-            CustomerTestUtils.generateTestCustomer(UUID.randomUUID().toString().substring(0, 8))
-        val insertedLocal2 = repository.insert(localCustomer2)
+        val localMedia2 =
+            MediaTestUtils.generateTestMedia(UUID.randomUUID().toString().substring(0, 8))
+        val insertedLocal2 = repository.insert(localMedia2)
         logTestResult("Insert local", !insertedLocal.isSynced)
         // Reconecte a internet e sincronize
         Log.d(
@@ -105,11 +105,11 @@ class CustomerRepositoryTest(
         kotlinx.coroutines.delay(30_000)
 
         repository.syncChanges()
-        val syncedCustomer = repository.getByIdLocal(insertedLocal2.id)
+        val syncedMedia = repository.getByIdLocal(insertedLocal2.id)
         repository.delete(insertedLocal2.id)
         logTestResult(
             "Sync após reconexão",
-            syncedCustomer?.serverId != null && syncedCustomer.isSynced
+            syncedMedia?.serverId != null && syncedMedia.isSynced
         )
 
 

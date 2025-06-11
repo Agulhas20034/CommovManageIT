@@ -229,6 +229,21 @@ class UsersRepository(
             null
         }
     }
+
+    suspend fun getByemailRemote(email: String): UserRemote? {
+        return try {
+            val remoteUsers = SupabaseManager.fetchByEmail<UserRemote>("users", email)
+
+            remoteUsers?.let { Users ->
+                UsersDao.update(Users.toLocal())
+            }
+
+            return remoteUsers
+        } catch (e: Exception) {
+            Log.e("UsersRepository", "Error fetching remote Users(normal if in test)", e)
+            null
+        }
+    }
     suspend fun clearLocalDatabase() {
         UsersDao.deleteAll()
     }

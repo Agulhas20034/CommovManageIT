@@ -7,8 +7,8 @@ import kotlinx.datetime.Clock
 object MediaTestUtils {
     fun generateTestMedia(
         prefix: String = "",
-        projectId: String? = UUID.randomUUID().toString(),
-        reportId: String? = UUID.randomUUID().toString(),
+        projectId: String? = "1",
+        reportId: String? = "1",
         name: String = "TestMedia_$prefix",
         type: String = "image/png",
         path: String = "/tmp/testmedia_$prefix.png"

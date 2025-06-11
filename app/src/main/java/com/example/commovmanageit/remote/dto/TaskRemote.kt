@@ -32,7 +32,9 @@ fun TaskRemote.toLocal() = Task(
     status = status,
     createdAt = parseDateTimeString(created_at),
     updatedAt = parseDateTimeString(updated_at),
-    deletedAt = deleted_at?.let { parseDateTimeString(it) }
+    deletedAt = deleted_at?.let { parseDateTimeString(it) },
+    isSynced = true,
+    serverId = id
 )
 
 @RequiresApi(Build.VERSION_CODES.O)

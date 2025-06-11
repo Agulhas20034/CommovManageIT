@@ -11,11 +11,12 @@ import androidx.core.content.edit
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
-    private var currentLanguage = "en"
+    private lateinit var currentLanguage: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loadLanguage()
+        currentLanguage = (application as App).getSavedLanguage(this)
+        (application as App).loadLanguage(this)
         setContentView(R.layout.activity_main)
 
         setupLanguageButton()
@@ -30,35 +31,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupStartButton() {
         findViewById<Button>(R.id.btnStart).setOnClickListener {
-
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
     }
 
     private fun toggleLanguage() {
         currentLanguage = if (currentLanguage == "en") "pt" else "en"
-        saveLanguage(currentLanguage)
-        updateLanguage(currentLanguage)
+        (application as App).saveLanguage(this, currentLanguage)
+        (application as App).updateLanguage(this, currentLanguage)
         recreate()
-    }
-
-    private fun loadLanguage() {
-        val sharedPref = getPreferences(Context.MODE_PRIVATE)
-        currentLanguage = sharedPref.getString("language", "en") ?: "en"
-        updateLanguage(currentLanguage)
-    }
-
-    private fun saveLanguage(lang: String) {
-        getPreferences(Context.MODE_PRIVATE).edit {
-            putString("language", lang)
-        }
-    }
-
-    private fun updateLanguage(languageCode: String) {
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-        val config = Configuration(resources.configuration)
-        config.setLocale(locale)
-        createConfigurationContext(config)
-        resources.updateConfiguration(config, resources.displayMetrics)
     }
 }

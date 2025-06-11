@@ -8,9 +8,9 @@ import kotlin.random.Random
 object ProjectUserTestUtils {
     fun generateTestProjectUser(
         prefix: String = "",
-        projectId: String = UUID.randomUUID().toString(),
-        userId: String = UUID.randomUUID().toString(),
-        inviterId: String? = UUID.randomUUID().toString(),
+        projectId: String = "1",
+        userId: String = "1",
+        inviterId: String? = "1",
         speed: Int? = Random.nextInt(1, 10),
         quality: Int? = Random.nextInt(1, 10),
         collaboration: Int? = Random.nextInt(1, 10),

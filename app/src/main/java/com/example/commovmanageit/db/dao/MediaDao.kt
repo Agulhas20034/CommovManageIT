@@ -36,7 +36,7 @@ interface MediaDao {
     @Query("UPDATE media SET is_synced = :isSynced, server_id = :serverId WHERE id = :id")
     suspend fun updateSyncInfo(id: String, isSynced: Boolean, serverId: String?)
 
-    @Query("UPDATE media SET deleted_at = :timestamp WHERE id = :id")
+    @Query("UPDATE media SET deleted_at = :timestamp,is_synced=0 WHERE id = :id")
     suspend fun softDelete(id: String, timestamp: Instant = Clock.System.now())
 
     @Query("SELECT * FROM media WHERE project_id = :projectId AND deleted_at IS NULL ORDER BY created_at DESC")
@@ -66,6 +66,29 @@ interface MediaDao {
     @Query("SELECT COUNT(*) FROM media WHERE is_synced = 0")
     suspend fun getUnsyncedCount(): Int
 
+    @Query("SELECT * FROM media WHERE id = :id")
+    fun observeById(id: String): Flow<Media?>
+
+
     @Query("DELETE FROM media")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM media WHERE is_synced = 0 AND deleted_at IS NULL")
+    fun observeUnsyncedChanges(): Flow<List<Media>>
+
+    @Query("SELECT * FROM media WHERE deleted_at IS NOT NULL AND is_synced = 0")
+    fun observeUnsyncedDeletes(): Flow<List<Media>>
+
+    @Query("SELECT * FROM media WHERE is_synced = 0 AND deleted_at IS NULL")
+    suspend fun getUnsyncedCreatedOrUpdated(): List<Media>
+
+    @Query("SELECT * FROM media WHERE deleted_at IS NOT NULL AND is_synced = 0")
+    suspend fun getUnsyncedDeleted(): List<Media>
+
+    @Query("UPDATE media SET is_synced = :isSynced WHERE id = :id")
+    suspend fun updateSyncStatus(id: String, isSynced: Boolean)
+
+    @Query("UPDATE media SET is_synced = 1, server_id = :serverId WHERE id = :localId")
+    suspend fun markAsSynced(localId: String, serverId: String)
+    
 }

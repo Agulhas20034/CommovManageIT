@@ -9,8 +9,8 @@ object ReportTestUtils {
     fun generateTestReport(prefix: String = ""): Report {
         return Report(
             id = UUID.randomUUID().toString(),
-            userId = "user_$prefix",
-            projectId = "project_$prefix",
+            userId = "1",
+            projectId = "1",
             createdAt = Clock.System.now(),
             updatedAt = Clock.System.now(),
             deletedAt = null,

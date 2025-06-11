@@ -28,14 +28,16 @@ fun TaskUserRemote.toLocal() = TaskUser(
     id = id,
     taskId = task_id,
     userId = user_id,
-    startDate = start_date?.let { Instant.parse(it) },
-    endDate = end_date?.let { Instant.parse(it) },
+    startDate = start_date?.let { parseDateTimeString(it) },
+    endDate = end_date?.let { parseDateTimeString(it) },
     location = location,
     conclusionRate = conclusion_rate,
     timeUsed = time_used,
     createdAt = parseDateTimeString(created_at),
     updatedAt = parseDateTimeString(updated_at),
-    deletedAt = deleted_at?.let { parseDateTimeString(it) }
+    deletedAt = deleted_at?.let { parseDateTimeString(it) },
+    isSynced = true,
+    serverId = id
 )
 
 fun TaskUser.toRemote() = TaskUserRemote(

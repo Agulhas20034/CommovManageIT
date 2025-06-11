@@ -10,8 +10,8 @@ object TaskUserTestUtils {
     fun generateTestTaskUser(prefix: String = ""): TaskUser {
         return TaskUser(
             id = UUID.randomUUID().toString(),
-            taskId = "task_$prefix",
-            userId = "user_$prefix",
+            taskId = "1",
+            userId = "1",
             startDate = Clock.System.now(),
             endDate = null,
             location = "Localização $prefix",
