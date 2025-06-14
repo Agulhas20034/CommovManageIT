@@ -124,7 +124,7 @@ class PermissionRepository(
                 permissionDao.softDelete(id)
 
                 if (it.serverId != null && connectivityMonitor.isConnected) {
-                    deleteRemote(it.serverId)
+                    deleteRemote(it.serverId!!)
                     permissionDao.updateSyncStatus(id, true)
                 }
             } ?: throw Exception("Permissão não encontrada")

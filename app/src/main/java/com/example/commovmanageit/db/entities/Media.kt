@@ -13,15 +13,15 @@ data class Media(
     @PrimaryKey
     val id: String,
     @ColumnInfo(name = "project_id")
-    val projectId: String?,
+    var projectId: String?,
     @ColumnInfo(name = "report_id")
-    val reportId: String?,
+    var reportId: String?,
     @ColumnInfo(name = "name")
-    val name: String,
+    var name: String,
     @ColumnInfo(name = "type")
-    val type: String,
+    var type: String,
     @ColumnInfo(name = "path")
-    val path: String,
+    var path: String,
     @ColumnInfo(name = "created_at")
     val createdAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "updated_at")
@@ -29,7 +29,7 @@ data class Media(
     @ColumnInfo(name = "deleted_at")
     var deletedAt: Instant? = null,
     @ColumnInfo(name = "is_synced", defaultValue = "0")
-    val isSynced: Boolean = false,
+    var isSynced: Boolean = false,
     @ColumnInfo(name = "server_id")
-    val serverId: String? = null
+    var serverId: String? = null
 )

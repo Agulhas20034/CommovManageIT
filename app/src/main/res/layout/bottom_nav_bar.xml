@@ -8,7 +8,6 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:background="@color/white"
-    app:menu="@menu/bottom_nav_menu_u"
     app:itemIconTint="@drawable/bottom_nav_colors"
     app:itemTextColor="@drawable/bottom_nav_colors"
     app:labelVisibilityMode="labeled"/>

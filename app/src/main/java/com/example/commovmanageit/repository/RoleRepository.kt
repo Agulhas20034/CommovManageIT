@@ -120,7 +120,7 @@ class RoleRepository(
             role?.let {
                 roleDao.softDelete(id)
                 if (it.serverId != null && connectivityMonitor.isConnected) {
-                    deleteRemote(it.serverId)
+                    deleteRemote(it.serverId!!)
                     roleDao.updateSyncStatus(id, true)
                 }
             } ?: throw Exception("Role not found")

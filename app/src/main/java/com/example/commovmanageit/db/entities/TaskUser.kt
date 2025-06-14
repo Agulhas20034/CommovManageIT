@@ -13,19 +13,19 @@ data class TaskUser(
     @PrimaryKey
     val id: String,
     @ColumnInfo(name = "task_id")
-    val taskId: String,
+    var taskId: String,
     @ColumnInfo(name = "user_id")
-    val userId: String,
+    var userId: String,
     @ColumnInfo(name = "start_date")
     var startDate: Instant?,
     @ColumnInfo(name = "end_date")
     var endDate: Instant?,
     @ColumnInfo(name = "location")
-    val location: String?,
+    var location: String?,
     @ColumnInfo(name = "conclusion_rate")
-    val conclusionRate: Float?,
+    var conclusionRate: Float?,
     @ColumnInfo(name = "time_used")
-    val timeUsed: Float?,
+    var timeUsed: Float?,
     @ColumnInfo(name = "created_at")
     val createdAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "updated_at")
@@ -33,7 +33,7 @@ data class TaskUser(
     @ColumnInfo(name = "deleted_at")
     var deletedAt: Instant? = null,
     @ColumnInfo(name = "is_synced", defaultValue = "0")
-    val isSynced: Boolean = false,
+    var isSynced: Boolean = false,
     @ColumnInfo(name = "server_id")
-    val serverId: String? = null
+    var serverId: String? = null
 )

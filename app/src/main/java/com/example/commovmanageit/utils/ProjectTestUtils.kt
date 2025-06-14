@@ -12,7 +12,8 @@ object ProjectTestUtils {
         customerId: String? = "1",
         name: String = "TestProject_$prefix",
         hourlyRate: Float? = Random.nextFloat() * 100,
-        dailyWorkHours: Int? = Random.nextInt(4, 10)
+        dailyWorkHours: Int? = Random.nextInt(4, 10),
+        description: String? = "null"
     ): Project {
         return Project(
             id = UUID.randomUUID().toString(),
@@ -25,7 +26,8 @@ object ProjectTestUtils {
             updatedAt = Clock.System.now(),
             deletedAt = null,
             isSynced = false,
-            serverId = null
+            serverId = null,
+            description = description.toString()
         )
     }
 

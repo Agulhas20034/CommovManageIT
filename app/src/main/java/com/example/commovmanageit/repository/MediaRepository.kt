@@ -128,7 +128,7 @@ class MediaRepository(
                 MediaDao.softDelete(id)
 
                 if (it.serverId != null && connectivityMonitor.isConnected) {
-                    deleteRemote(it.serverId)
+                    deleteRemote(it.serverId!!)
                     MediaDao.updateSyncStatus(id, true)
                 }
             } ?: throw Exception("Media not found")

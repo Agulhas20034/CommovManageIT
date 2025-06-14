@@ -6,7 +6,9 @@ import com.example.commovmanageit.remote.dto.ProjectUserRemote
 import com.example.commovmanageit.remote.dto.toRemote
 import com.example.commovmanageit.remote.SupabaseManager
 import com.example.commovmanageit.db.dao.ProjectUserDao
+import com.example.commovmanageit.db.dao.TaskDao
 import com.example.commovmanageit.db.entities.ProjectUser
+import com.example.commovmanageit.remote.dto.UserRemote
 import com.example.commovmanageit.remote.dto.toLocal
 import com.example.commovmanageit.utils.ConnectivityMonitor
 import kotlinx.coroutines.CoroutineScope
@@ -128,7 +130,7 @@ class ProjectUserRepository(
                 ProjectUserDao.softDelete(id)
 
                 if (it.serverId != null && connectivityMonitor.isConnected) {
-                    deleteRemote(it.serverId)
+                    deleteRemote(it.serverId!!)
                     ProjectUserDao.updateSyncStatus(id, true)
                 }
             } ?: throw Exception("ProjectUser not found")
@@ -228,6 +230,35 @@ class ProjectUserRepository(
             return remoteProjectUser
         } catch (e: Exception) {
             Log.e("ProjectUserRepository", "Error fetching remote ProjectUser(normal if in test)", e)
+            null
+        }
+    }
+
+    suspend fun getByUserIdRemote(id: String): List<ProjectUserRemote>? {
+        return try {
+            val remoteProjectUser = SupabaseManager.fetchByUserId<ProjectUserRemote>("project_users", id, "user_id")
+
+            remoteProjectUser?.let { projectUser ->
+                projectUser.forEach { ProjectUserDao.update(it.toLocal()) }
+            }
+
+            return remoteProjectUser
+        } catch (e: Exception) {
+            Log.e("ProjectUserRepository", "Error fetching remote ProjectUser(normal if in test)", e)
+            null
+        }
+    }
+    suspend fun getByProjectIdRemote(id: String): ProjectUserRemote? {
+        return try {
+            val remoteUsers = SupabaseManager.fetchByProjectId<ProjectUserRemote>("project_users", id)
+
+            remoteUsers?.let { Users ->
+                ProjectUserDao.update(Users.toLocal())
+            }
+
+            return remoteUsers
+        } catch (e: Exception) {
+            Log.e("ProjectUsersRepository", "Error fetching remote ProjectUsers by project(normal if in test)", e)
             null
         }
     }

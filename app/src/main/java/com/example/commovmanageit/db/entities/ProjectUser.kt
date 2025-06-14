@@ -13,19 +13,19 @@ data class ProjectUser(
     @PrimaryKey
     val id: String,
     @ColumnInfo(name = "project_id")
-    val projectId: String,
+    var projectId: String,
     @ColumnInfo(name = "user_id")
-    val userId: String,
+    var userId: String,
     @ColumnInfo(name = "inviter_id")
-    val inviterId: String?,
+    var inviterId: String?,
     @ColumnInfo(name = "speed")
-    val speed: Int?,
+    var speed: Int?,
     @ColumnInfo(name = "quality")
-    val quality: Int?,
+    var quality: Int?,
     @ColumnInfo(name = "collaboration")
-    val collaboration: Int?,
+    var collaboration: Int?,
     @ColumnInfo(name = "status")
-    val status: String,
+    var status: String,
     @ColumnInfo(name = "created_at")
     val createdAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "updated_at")
@@ -33,7 +33,7 @@ data class ProjectUser(
     @ColumnInfo(name = "deleted_at")
     var deletedAt: Instant? = null,
     @ColumnInfo(name = "is_synced", defaultValue = "0")
-    val isSynced: Boolean = false,
+    var isSynced: Boolean = false,
     @ColumnInfo(name = "server_id")
-    val serverId: String? = null
+    var serverId: String? = null
 )

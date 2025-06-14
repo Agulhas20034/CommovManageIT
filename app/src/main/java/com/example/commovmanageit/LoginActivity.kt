@@ -3,6 +3,8 @@ package com.example.commovmanageit
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +18,7 @@ class LoginActivity : AppCompatActivity() {
 
     private val userRepository by lazy { (application as App).userRepository }
     private var currentLanguage: String = "en"
+    private lateinit var btnOnredirect: Button
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
         val emailInput = findViewById<TextInputEditText>(R.id.email)
         val passwordInput = findViewById<TextInputEditText>(R.id.passwordfield)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
+        btnOnredirect = findViewById(R.id.tvLoginRedirect)
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
         val btnLanguage = findViewById<ImageButton>(R.id.btnLanguage)
         val tvCurrentLanguage = findViewById<TextView>(R.id.tvCurrentLanguage)
@@ -53,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
                 val user = userRepository.getByemailRemote(email)
                 if (user != null && user.password == password) {
                     (application as App).currentUser = user.toLocal()
+                    Log.d("LoginActivity", "User logged in: ${user.email}")
                     startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
                     finish()
                 } else {
@@ -60,5 +65,12 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
+    fun onLoginRedirectClick(view: View) {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
 }

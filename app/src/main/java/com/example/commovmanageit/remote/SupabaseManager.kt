@@ -2,6 +2,7 @@ package com.example.commovmanageit.remote
 
 import android.util.Log
 import com.example.commovmanageit.db.entities.Media
+import com.example.commovmanageit.db.entities.Project
 import com.example.commovmanageit.db.entities.User
 import com.example.commovmanageit.remote.dto.CustomerRemote
 import com.example.commovmanageit.remote.dto.LogsRemote
@@ -57,6 +58,18 @@ object SupabaseManager {
     suspend inline fun <reified T : Any> fetchById(table: String, id: String): T {
         return client.postgrest[table].select {
             filter { eq("id", id) }
+        }.decodeSingle()
+    }
+
+    suspend inline fun <reified T : Any> fetchByUserId(table: String, id: String,field:String): List<T> {
+        return client.postgrest[table].select {
+            filter { eq(field, id) }
+        }.decodeList()
+    }
+
+    suspend inline fun <reified T : Any> fetchByProjectId(table: String, id: String): T {
+        return client.postgrest[table].select {
+            filter { eq("project_id", id) }
         }.decodeSingle()
     }
 
@@ -201,6 +214,7 @@ object SupabaseManager {
             ProjectRemote::hourly_rate setTo data.hourly_rate
             ProjectRemote::updated_at setTo Clock.System.now().toString()
             ProjectRemote::deleted_at setTo data.deleted_at
+            ProjectRemote::description setTo data.description
         }) {
             filter { ProjectRemote::id eq id }
         }

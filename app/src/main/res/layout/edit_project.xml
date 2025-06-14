@@ -121,6 +121,40 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/spinner_background"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hourly_rate"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="4dp"/>
+
+            <EditText
+                android:id="@+id/etHourlyRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_hourly_rate"
+                android:inputType="numberDecimal"
+                android:background="@drawable/edittext_background"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_daily_work_hours"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="4dp"/>
+
+            <EditText
+                android:id="@+id/etDailyWorkHours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/daily_work_hours"
+                android:inputType="numberDecimal"
+                android:background="@drawable/edittext_background"/>
+
             <Button
                 android:id="@+id/btnCreateProject"
                 android:layout_width="match_parent"

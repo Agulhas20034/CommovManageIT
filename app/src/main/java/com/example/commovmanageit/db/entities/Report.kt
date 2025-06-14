@@ -13,9 +13,9 @@ data class Report(
     @PrimaryKey
     val id: String,
     @ColumnInfo(name = "user_id")
-    val userId: String?,
+    var userId: String?,
     @ColumnInfo(name = "project_id")
-    val projectId: String,
+    var projectId: String,
     @ColumnInfo(name = "created_at")
     val createdAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "updated_at")
@@ -23,7 +23,7 @@ data class Report(
     @ColumnInfo(name = "deleted_at")
     var deletedAt: Instant? = null,
     @ColumnInfo(name = "is_synced", defaultValue = "0")
-    val isSynced: Boolean = false,
+    var isSynced: Boolean = false,
     @ColumnInfo(name = "server_id")
-    val serverId: String? = null
+    var serverId: String? = null
 )

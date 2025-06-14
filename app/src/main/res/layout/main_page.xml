@@ -66,13 +66,33 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/projects"
-                android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/projects"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnCreateProject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_project"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/primaryColor"
+                    android:textSize="16sp"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/projectsContainer"
@@ -84,7 +104,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,11 +112,6 @@
         android:background="@color/gray_light"
         android:orientation="horizontal">
 
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
 
-        <include layout="@layout/bottom_nav_bar"/>
-    </LinearLayout>
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 </RelativeLayout>

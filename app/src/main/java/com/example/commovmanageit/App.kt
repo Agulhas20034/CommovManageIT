@@ -53,6 +53,9 @@ class App : Application() {
     lateinit var taskuserRepository: TaskUserRepository
     lateinit var currentLanguage: String
     var currentUser: User? = null
+    fun logout() {
+        currentUser = null
+    }
     fun getSavedLanguage(context: Context): String {
         val sharedPref = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
         return sharedPref.getString("language", "en") ?: "en"
@@ -237,6 +240,7 @@ class App : Application() {
                         customerId = "1",
                         hourlyRate = 1.0F,
                         dailyWorkHours = 1,
+                        description = "teste"
                     )
                 )
             }

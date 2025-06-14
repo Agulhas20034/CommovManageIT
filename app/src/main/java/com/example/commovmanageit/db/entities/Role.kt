@@ -13,9 +13,9 @@ data class Role(
     @PrimaryKey
     val id: String,
     @ColumnInfo(name = "permission_id")
-    val permissionId: String,
+    var permissionId: String,
     @ColumnInfo(name = "name")
-    val name: String,
+    var name: String,
     @ColumnInfo(name = "created_at")
     val createdAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "updated_at")
@@ -23,7 +23,7 @@ data class Role(
     @ColumnInfo(name = "deleted_at")
     var deletedAt: Instant? = null,
     @ColumnInfo(name = "is_synced", defaultValue = "0")
-    val isSynced: Boolean = false,
+    var isSynced: Boolean = false,
     @ColumnInfo(name = "server_id")
-    val serverId: String? = null
+    var serverId: String? = null
 )

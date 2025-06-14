@@ -128,7 +128,7 @@ class TaskUserRepository(
                 TaskUserDao.softDelete(id)
 
                 if (it.serverId != null && connectivityMonitor.isConnected) {
-                    deleteRemote(it.serverId)
+                    deleteRemote(it.serverId!!)
                     TaskUserDao.updateSyncStatus(id, true)
                 }
             } ?: throw Exception("TaskUser not found")
@@ -228,6 +228,20 @@ class TaskUserRepository(
             return remoteTaskUser
         } catch (e: Exception) {
             Log.e("TaskUserRepository", "Error fetching remote TaskUser(normal if in test)", e)
+            null
+        }
+    }
+    suspend fun getByUserIdRemote(id: String): List<TaskUserRemote>? {
+        return try {
+            val remoteTask = SupabaseManager.fetchByUserId<TaskUserRemote>("task_users", id, "user_id")
+
+            remoteTask?.let { task ->
+                task.forEach { TaskUserDao.update(it.toLocal()) }
+            }
+
+            return remoteTask
+        } catch (e: Exception) {
+            Log.e("TaskRepository", "Error fetching remote Task(normal if in test)", e)
             null
         }
     }

@@ -128,7 +128,7 @@ class ReportRepository(
                 ReportDao.softDelete(id)
 
                 if (it.serverId != null && connectivityMonitor.isConnected) {
-                    deleteRemote(it.serverId)
+                    deleteRemote(it.serverId!!)
                     ReportDao.updateSyncStatus(id, true)
                 }
             } ?: throw Exception("Report not found")

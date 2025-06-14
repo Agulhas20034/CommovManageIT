@@ -1,5 +1,6 @@
 package com.example.commovmanageit.remote.dto
 
+import android.R.attr.description
 import com.example.commovmanageit.db.entities.Project
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
@@ -18,7 +19,9 @@ data class ProjectRemote(
     @SerialName("daily_work_hours") val daily_work_hours: Int?,
     @SerialName("created_at") val created_at: String,
     @SerialName("updated_at") val updated_at: String,
-    @SerialName("deleted_at") val deleted_at: String?
+    @SerialName("deleted_at") val deleted_at: String?,
+    @SerialName("description") val description: String?
+
 )
 
 fun ProjectRemote.toLocal() = Project(
@@ -32,7 +35,8 @@ fun ProjectRemote.toLocal() = Project(
     updatedAt = parseDateTimeString(updated_at),
     deletedAt = deleted_at?.let { parseDateTimeString(it) },
     serverId = id,
-    isSynced = true
+    isSynced = true,
+    description = description.toString()
 )
 
 fun Project.toRemote() = ProjectRemote(
@@ -40,6 +44,7 @@ fun Project.toRemote() = ProjectRemote(
     user_id = userId,
     customer_id = customerId,
     name = name,
+    description = description,
     hourly_rate = hourlyRate,
     daily_work_hours = dailyWorkHours,
     created_at = createdAt.toString(),

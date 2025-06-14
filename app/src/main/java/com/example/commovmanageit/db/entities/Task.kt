@@ -13,15 +13,15 @@ data class Task(
     @PrimaryKey
     val id: String,
     @ColumnInfo(name = "project_id")
-    val projectId: String,
+    var projectId: String,
     @ColumnInfo(name = "name")
-    val name: String?,
+    var name: String?,
     @ColumnInfo(name = "description")
-    val description: String,
+    var description: String,
     @ColumnInfo(name = "hourly_rate")
-    val hourlyRate: Float?,
+    var hourlyRate: Float?,
     @ColumnInfo(name = "status")
-    val status: String,
+    var status: String,
     @ColumnInfo(name = "created_at")
     val createdAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "updated_at")
@@ -29,7 +29,7 @@ data class Task(
     @ColumnInfo(name = "deleted_at")
     var deletedAt: Instant? = null,
     @ColumnInfo(name = "is_synced", defaultValue = "0")
-    val isSynced: Boolean = false,
+    var isSynced: Boolean = false,
     @ColumnInfo(name = "server_id")
-    val serverId: String? = null
+    var serverId: String? = null
 )

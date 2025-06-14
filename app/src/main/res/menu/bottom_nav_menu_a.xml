@@ -5,10 +5,6 @@
         android:icon="@drawable/ic_main"
         android:title="@string/main"/>
     <item
-        android:id="@+id/nav_create"
-        android:icon="@drawable/ic_create_project"
-        android:title="@string/manage_project"/>
-    <item
         android:id="@+id/nav_tasks"
         android:icon="@drawable/ic_manage_tasks"
         android:title="@string/manage_tasks"/>

@@ -57,4 +57,17 @@
     <string name="delete_success_message">Projeto apagado com sucesso</string>
     <string name="edit">Editar</string>
     <string name="edit_projects">Editar Informação do Projeto</string>
+    <string name="Create_Task">Criar Tarefa</string>
+    <string name="fill_all_fields">Preencha todos os campos</string>
+    <string name="invalid_login">Login Invalido</string>
+    <string name="create_project">Criar Projecto</string>
+    <string name="project_created">Projeto Criado</string>
+    <string name="customer">Cliente</string>
+    <string name="hourly_rate">Preço por hora</string>
+    <string name="enter_hourly_rate">Insira preço por hora</string>
+    <string name="daily_work_hours">Horas diarias de trabalho</string>
+    <string name="enter_daily_work_hours">Insira horas diarias de trabalho</string>
+    <string name="no_items_in_spinners">Sem valores nos menus dropdown</string>
+    <string name="project_updated">Projeto Atualizado</string>
+
 </resources>

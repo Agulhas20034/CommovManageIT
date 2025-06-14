@@ -60,4 +60,22 @@
     <string name="Create_Task">Create Task</string>
     <string name="fill_all_fields">Fill all fields</string>
     <string name="invalid_login">Invalid Login</string>
+    <string name="create_project" >Create Project</string>
+    <string name="project_created">Project Created</string>
+    <string name="customer">Customer</string>
+    <string name="hourly_rate">Hourly Rate</string>
+    <string name="enter_hourly_rate">Enter hourly Rate</string>
+    <string name="daily_work_hours">Daily Work Hours</string>
+    <string name="enter_daily_work_hours">Enter daily work hours</string>
+    <string name="no_items_in_spinners">No values in the dropdowns</string>
+    <string name="project_updated">Project Updated</string>
+    <string name="confirm_delete_title">Quer apagar este projeto?</string>
+    <string name="confirm_delete_message">Tem a certeza?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="register_success">Registered successfully</string>
+    <string name="email_already_registered">Email already registered</string>
+    <string name="save">Save</string>
+    <string name="edit_profile_title">Edit Profile</string>
+    <string name="profile_updated">Profile Updated</string>
 </resources>

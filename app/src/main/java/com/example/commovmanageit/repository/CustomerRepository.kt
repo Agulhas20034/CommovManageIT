@@ -128,7 +128,7 @@ class CustomerRepository(
                 customerDao.softDelete(id)
 
                 if (it.serverId != null && connectivityMonitor.isConnected) {
-                    deleteRemote(it.serverId)
+                    deleteRemote(it.serverId!!)
                     customerDao.updateSyncStatus(id, true)
                 }
             } ?: throw Exception("Customer not found")
@@ -203,9 +203,9 @@ class CustomerRepository(
                     name = remote.name,
                     email = remote.email,
                     phone_Number = remote.phone_number,
-                    createdAt = Instant.parse(remote.created_at),
-                    updatedAt = Instant.parse(remote.updated_at),
-                    deletedAt = remote.deleted_at?.let { Instant.parse(remote.deleted_at) },
+                    createdAt = Instant.parse(ensureIso8601(remote.created_at)),
+                    updatedAt = Instant.parse(ensureIso8601(remote.updated_at)),
+                    deletedAt = remote.deleted_at?.let { Instant.parse(ensureIso8601(remote.deleted_at)) },
                     isSynced = true
                 )
             }
@@ -232,5 +232,8 @@ class CustomerRepository(
     }
     suspend fun clearLocalDatabase() {
         customerDao.deleteAll()
+    }
+    private fun ensureIso8601(dateTime: String): String {
+        return if (dateTime.endsWith("Z") || dateTime.contains("+")) dateTime else "${dateTime}Z"
     }
 }

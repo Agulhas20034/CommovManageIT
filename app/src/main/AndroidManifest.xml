@@ -32,6 +32,24 @@
         <activity
             android:name="com.example.commovmanageit.DashboardActivity"
             android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.CreateProjectActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.ProjectsActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.EditProjectActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.RegisterActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.ProfileActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.EditProfileActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

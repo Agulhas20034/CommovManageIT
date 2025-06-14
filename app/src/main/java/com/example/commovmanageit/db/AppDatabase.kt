@@ -45,7 +45,7 @@ import kotlinx.datetime.Instant
         Logs::class
 
     ],
-    version = 6,
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

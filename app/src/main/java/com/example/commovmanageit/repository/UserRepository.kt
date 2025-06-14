@@ -1,9 +1,12 @@
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.commovmanageit.db.dao.TaskDao
 import com.example.commovmanageit.db.dao.UserDao
 import com.example.commovmanageit.db.entities.User
 import com.example.commovmanageit.remote.SupabaseManager
+import com.example.commovmanageit.remote.dto.ProjectUserRemote
+import com.example.commovmanageit.remote.dto.TaskRemote
 import com.example.commovmanageit.remote.dto.UserRemote
 import com.example.commovmanageit.remote.dto.toLocal
 import com.example.commovmanageit.remote.dto.toRemote
@@ -128,7 +131,7 @@ class UsersRepository(
                 UsersDao.softDelete(id)
 
                 if (it.serverId != null && connectivityMonitor.isConnected) {
-                    deleteRemote(it.serverId)
+                    deleteRemote(it.serverId!!)
                     UsersDao.updateSyncStatus(id, true)
                 }
             } ?: throw Exception("Users not found")
@@ -199,9 +202,9 @@ class UsersRepository(
                     id = remote.id,
                     serverId = remote.id,
                     email = remote.email,
-                    createdAt = Instant.parse(remote.created_at),
-                    updatedAt = Instant.parse(remote.updated_at),
-                    deletedAt = remote.deleted_at?.let { Instant.parse(remote.deleted_at) },
+                    createdAt = Instant.parse(if (remote.created_at.endsWith("Z") || remote.created_at.contains("+")) remote.created_at else remote.created_at + "Z"),
+                    updatedAt = Instant.parse(if (remote.updated_at.endsWith("Z") || remote.updated_at.contains("+")) remote.updated_at else remote.updated_at + "Z"),
+                    deletedAt = remote.deleted_at?.let { Instant.parse(if (it.endsWith("Z") || it.contains("+")) it else it + "Z") },
                     isSynced = true,
                     roleId = remote.role_id,
                     password = remote.password.toString(),
@@ -226,6 +229,24 @@ class UsersRepository(
             return remoteUsers
         } catch (e: Exception) {
             Log.e("UsersRepository", "Error fetching remote Users(normal if in test)", e)
+            null
+        }
+    }
+
+    suspend fun getByProjectIdRemote(projectId: String): List<UserRemote>? {
+        return try {
+            // Busca os user_ids na tabela projectusers
+            val projectUsers = SupabaseManager.fetchByUserId<ProjectUserRemote>("project_users", projectId, "project_id")
+            val userIds = projectUsers.map { it.user_id }
+            // Busca os usuários na tabela users usando os ids encontrados
+            val users = userIds.map { userId ->
+                Log.d("UsersRepository", "Fetching remote Users by ID: $userId")
+                SupabaseManager.fetchById<UserRemote>("users", userId)
+            }
+            users.forEach { UsersDao.update(it.toLocal()) }
+            users
+        } catch (e: Exception) {
+            Log.e("UsersRepository", "Erro ao buscar usuários do projeto (normal se em teste)", e)
             null
         }
     }

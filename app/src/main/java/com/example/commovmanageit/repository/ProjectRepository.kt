@@ -207,7 +207,8 @@ class ProjectRepository(
                     userId = remote.user_id,
                     customerId = remote.customer_id,
                     hourlyRate = remote.hourly_rate,
-                    dailyWorkHours = remote.daily_work_hours
+                    dailyWorkHours = remote.daily_work_hours,
+                    description = remote.description.toString()
                 )
             }
         } catch (e: Exception) {
@@ -232,6 +233,8 @@ class ProjectRepository(
             null
         }
     }
+
+
     suspend fun clearLocalDatabase() {
         ProjectDao.deleteAll()
     }

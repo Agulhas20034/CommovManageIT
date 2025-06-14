@@ -13,15 +13,17 @@ data class Project(
     @PrimaryKey
     val id: String,
     @ColumnInfo(name = "user_id")
-    val userId: String?,
+    var userId: String?,
     @ColumnInfo(name = "customer_id")
-    val customerId: String?,
+    var customerId: String?,
     @ColumnInfo(name = "name")
-    val name: String,
+    var name: String,
+    @ColumnInfo(name = "description")
+    var description: String,
     @ColumnInfo(name = "hourly_rate")
-    val hourlyRate: Float?,
+    var hourlyRate: Float?,
     @ColumnInfo(name = "daily_work_hours")
-    val dailyWorkHours: Int?,
+    var dailyWorkHours: Int?,
     @ColumnInfo(name = "created_at")
     val createdAt: Instant = Clock.System.now(),
     @ColumnInfo(name = "updated_at")
@@ -29,7 +31,7 @@ data class Project(
     @ColumnInfo(name = "deleted_at")
     var deletedAt: Instant? = null,
     @ColumnInfo(name = "is_synced", defaultValue = "0")
-    val isSynced: Boolean = false,
+    var isSynced: Boolean = false,
     @ColumnInfo(name = "server_id")
-    val serverId: String? = null
+    var serverId: String? = null
 )
