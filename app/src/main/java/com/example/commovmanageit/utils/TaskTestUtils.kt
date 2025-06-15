@@ -19,7 +19,8 @@ object TaskTestUtils {
             updatedAt = Clock.System.now(),
             deletedAt = null,
             isSynced = false,
-            serverId = null
+            serverId = null,
+            userId = "1"
         )
     }
 
