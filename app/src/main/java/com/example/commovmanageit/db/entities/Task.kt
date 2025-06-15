@@ -13,9 +13,11 @@ data class Task(
     @PrimaryKey
     val id: String,
     @ColumnInfo(name = "project_id")
-    var projectId: String,
+    var projectId: String? = null,
     @ColumnInfo(name = "name")
     var name: String?,
+    @ColumnInfo(name = "user_id")
+    var userId: String? = null,
     @ColumnInfo(name = "description")
     var description: String,
     @ColumnInfo(name = "hourly_rate")

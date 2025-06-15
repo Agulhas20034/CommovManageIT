@@ -263,6 +263,7 @@ object SupabaseManager {
     suspend inline fun <reified T : Any> updateTask(id: String, data: TaskRemote): TaskRemote{
         client.postgrest["tasks"].update({
             TaskRemote::name setTo data.name
+            TaskRemote::project_id setTo data.project_id
             TaskRemote::description setTo data.description
             TaskRemote::status setTo data.status
             TaskRemote::hourly_rate setTo data.hourly_rate

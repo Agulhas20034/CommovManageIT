@@ -26,14 +26,14 @@ import kotlinx.coroutines.launch
 
 class TestActivityCustomer : AppCompatActivity() {
 
-    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var app : App
     private lateinit var repositoryTest: CustomerRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val customerRepository = app.customerRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -67,14 +67,14 @@ class TestActivityCustomer : AppCompatActivity() {
 
 class TestActivityLog : AppCompatActivity() {
 
-    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var app : App
     private lateinit var repositoryTest: LogRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val customerRepository = app.logsRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -108,14 +108,14 @@ class TestActivityLog : AppCompatActivity() {
 
 class TestActivityPermission : AppCompatActivity() {
 
-    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var app : App
     private lateinit var repositoryTest: PermissionRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val permissionRepository = app.permissionRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -149,14 +149,14 @@ class TestActivityPermission : AppCompatActivity() {
 
 class TestActivityRole : AppCompatActivity() {
 
-    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var app : App
     private lateinit var repositoryTest: RoleRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val roleRepository = app.roleRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -190,14 +190,14 @@ class TestActivityRole : AppCompatActivity() {
 
 class TestActivityUser : AppCompatActivity() {
 
-    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var app : App
     private lateinit var repositoryTest: UsersRepositoryTests
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val userRepository = app.userRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -231,14 +231,14 @@ class TestActivityUser : AppCompatActivity() {
 
 class TestActivityProject : AppCompatActivity() {
 
-    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var app : App
     private lateinit var repositoryTest: ProjectRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val projectRepository = app.projectRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -272,14 +272,14 @@ class TestActivityProject : AppCompatActivity() {
 
 class TestActivityProjectUser : AppCompatActivity() {
 
-    private lateinit var app : com.example.commovmanageit.App
+    private lateinit var app : App
     private lateinit var repositoryTest: ProjectUserRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val projectusersRepository = app.projectusersRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -312,14 +312,14 @@ class TestActivityProjectUser : AppCompatActivity() {
 }
 class TestActivityMedia : AppCompatActivity() {
 
-    private lateinit var app: com.example.commovmanageit.App
+    private lateinit var app: App
     private lateinit var repositoryTest: MediaRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val mediaRepository = app.mediaRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -353,14 +353,14 @@ class TestActivityMedia : AppCompatActivity() {
 
 class TestActivityReport : AppCompatActivity() {
 
-    private lateinit var app: com.example.commovmanageit.App
+    private lateinit var app: App
     private lateinit var repositoryTest: ReportRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val reportRepository = app.reportRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -394,14 +394,14 @@ class TestActivityReport : AppCompatActivity() {
 
 class TestActivityTask : AppCompatActivity() {
 
-    private lateinit var app: com.example.commovmanageit.App
+    private lateinit var app: App
     private lateinit var repositoryTest: TaskRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val taskRepository = app.taskRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)
@@ -435,14 +435,14 @@ class TestActivityTask : AppCompatActivity() {
 
 class TestActivityTaskUser : AppCompatActivity() {
 
-    private lateinit var app: com.example.commovmanageit.App
+    private lateinit var app: App
     private lateinit var repositoryTest: TaskUserRepositoryTest
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        app = application as com.example.commovmanageit.App
+        app = application as App
         val taskuserRepository = app.taskuserRepository
         var connectivityMonitor = app.connectivityMonitor
         val appCoroutineScope = CoroutineScope(Dispatchers.IO)

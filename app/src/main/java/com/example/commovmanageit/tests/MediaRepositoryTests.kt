@@ -43,7 +43,6 @@ class MediaRepositoryTest(
     suspend fun testInsertUpdateDeleteFunctions() {
         Log.d("RepositoryTest", "-- Teste: Insert, Update e Delete (Local e Remoto) --")
 
-        // Teste remoto (com internet)
         if (connectivityMonitor.isConnected) {
             val remoteMedia = MediaTestUtils.generateTestMedia(
                 "RemoteTest-${
@@ -68,18 +67,15 @@ class MediaRepositoryTest(
             Log.d("RepositoryTest", "Sem internet, pulando teste remoto.")
         }
 
-        // Delay para desconectar a internet manualmente
         Log.d(
             "RepositoryTest",
             "Desconecte a internet agora para testar operações locais. Aguardando 30 segundos..."
         )
         kotlinx.coroutines.delay(30_000)
 
-        // Limpa localmente se já existir
         val localTestId = "local-test-${UUID.randomUUID().toString().substring(0, 8)}"
         repository.deleteLocal(localTestId, "Real")
 
-        // Teste local (sem internet)
         val localMedia = MediaTestUtils.generateTestMedia(localTestId)
         val insertedLocal = repository.insert(localMedia)
         logTestResult("Insert local", !insertedLocal.isSynced)
@@ -97,7 +93,6 @@ class MediaRepositoryTest(
             MediaTestUtils.generateTestMedia(UUID.randomUUID().toString().substring(0, 8))
         val insertedLocal2 = repository.insert(localMedia2)
         logTestResult("Insert local", !insertedLocal.isSynced)
-        // Reconecte a internet e sincronize
         Log.d(
             "RepositoryTest",
             "Reconecte a internet para testar sincronização. Aguardando 30 segundos..."

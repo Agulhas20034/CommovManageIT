@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".TasksActivity">
+    tools:context=".EditTasksActivity">
 
     <RelativeLayout
         android:id="@+id/topBar"
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/manage_tasks"
+            android:text="@string/edit_task"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -133,12 +133,13 @@
                 android:hint="@string/insira_status"/>
 
             <Button
-                android:id="@+id/btnCreateTask"
+                android:id="@+id/btnUpdateTask"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/Create_Task" />
+                android:text="@string/update_task" />
+
         </LinearLayout>
     </ScrollView>
 

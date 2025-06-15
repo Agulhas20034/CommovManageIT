@@ -8,6 +8,7 @@ import com.example.commovmanageit.remote.SupabaseManager
 import com.example.commovmanageit.db.dao.ProjectUserDao
 import com.example.commovmanageit.db.dao.TaskDao
 import com.example.commovmanageit.db.entities.ProjectUser
+import com.example.commovmanageit.remote.dto.TaskRemote
 import com.example.commovmanageit.remote.dto.UserRemote
 import com.example.commovmanageit.remote.dto.toLocal
 import com.example.commovmanageit.utils.ConnectivityMonitor
@@ -61,6 +62,7 @@ class ProjectUserRepository(
     @RequiresApi(Build.VERSION_CODES.O)
     public suspend fun insertRemote(ProjectUser: ProjectUser): String {
         val remoteProjectUser = ProjectUser.toRemote()
+        Log.d("ProjectUserRepository", "Inserting remote ProjectUser: ${remoteProjectUser.id}")
         val result = SupabaseManager.insertProjectUser<ProjectUserRemote>(remoteProjectUser)
         return result.id
     }
@@ -199,9 +201,9 @@ class ProjectUserRepository(
                 ProjectUser(
                     id = remote.id,
                     serverId = remote.id,
-                    createdAt = Instant.parse(remote.created_at),
-                    updatedAt = Instant.parse(remote.updated_at),
-                    deletedAt = remote.deleted_at?.let { Instant.parse(remote.deleted_at) },
+                    createdAt = Instant.parse(if (remote.created_at.endsWith("Z")) remote.created_at else remote.created_at + "Z"),
+                    updatedAt = Instant.parse(if (remote.updated_at.endsWith("Z")) remote.updated_at else remote.updated_at + "Z"),
+                    deletedAt = remote.deleted_at?.let { Instant.parse(if (it.endsWith("Z")) it else it + "Z") },
                     isSynced = true,
                     projectId = remote.project_id,
                     userId = remote.project_id,
@@ -259,6 +261,21 @@ class ProjectUserRepository(
             return remoteUsers
         } catch (e: Exception) {
             Log.e("ProjectUsersRepository", "Error fetching remote ProjectUsers by project(normal if in test)", e)
+            null
+        }
+    }
+
+    suspend fun getByProjectIdRemoteList(id: String): List<ProjectUserRemote>? {
+        return try {
+            val remoteProjectUser = SupabaseManager.fetchByUserId<ProjectUserRemote>("tasks", id, "project_id")
+
+            remoteProjectUser?.let { projectUser ->
+                projectUser.forEach { ProjectUserDao.update(it.toLocal()) }
+            }
+
+            return remoteProjectUser
+        } catch (e: Exception) {
+            Log.e("ProjectUserRepository", "Error fetching remote ProjectUser(normal if in test)", e)
             null
         }
     }

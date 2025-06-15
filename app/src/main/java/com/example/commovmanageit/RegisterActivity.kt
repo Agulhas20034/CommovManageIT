@@ -45,6 +45,8 @@ class RegisterActivity : AppCompatActivity() {
         tvCurrentLanguage.text = currentLanguage
 
         btnBack.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
             finish()
         }
 

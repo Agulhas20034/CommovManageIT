@@ -38,7 +38,6 @@ class RoleRepositoryTest(
     suspend fun testInsertUpdateDeleteFunctions() {
         Log.d("RoleRepositoryTest", "-- Teste: Insert, Update e Delete (Local e Remoto) --")
 
-        // Teste remoto (com internet)
         if (connectivityMonitor.isConnected) {
             val remoteRole = RoleTestUtils.generateTestRole("RemoteTest-${UUID.randomUUID().toString().substring(0, 8)}")
             val insertedRemote = repository.insert(remoteRole)
@@ -57,13 +56,11 @@ class RoleRepositoryTest(
         } else {
             Log.d("RoleRepositoryTest", "Sem internet, pulando teste remoto.")
         }
-        // Delay para desconectar a internet manualmente
         Log.d(
             "RepositoryTest",
             "Desconecte a internet agora para testar operações locais. Aguardando 15 segundos..."
         )
         kotlinx.coroutines.delay(15_000)
-        // Teste local (sem internet)
         val localRole = RoleTestUtils.generateTestRole("LocalTest-${UUID.randomUUID().toString().substring(0, 8)}")
         val insertedLocal = repository.insert(localRole)
         logTestResult("Insert local", !insertedLocal.isSynced)
@@ -77,7 +74,6 @@ class RoleRepositoryTest(
         val deletedLocal = repository.getByIdLocal(insertedLocal.id)
         logTestResult("Delete local", deletedLocal?.deletedAt != null)
 
-        // Delay para desconectar a internet manualmente
         Log.d(
             "RepositoryTest",
             "Reconecte a internet agora para testar operações locais. Aguardando 30 segundos..."

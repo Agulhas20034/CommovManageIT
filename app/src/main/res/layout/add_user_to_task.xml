@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".TasksActivity">
+    tools:context=".AddUserToTaskActivity">
+
     <RelativeLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -21,11 +22,12 @@
             android:padding="8dp"
             android:src="@drawable/ic_left_arrow"
             tools:ignore="TouchTargetSizeCheck" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/manage_tasks"
+            android:text="@string/add_user_to_task"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -36,12 +38,10 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            tools:ignore="RelativeOverlap">
-
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/CurrentLanguage"
+                android:id="@+id/tvCurrentLanguage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -60,56 +60,78 @@
                 tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
     </RelativeLayout>
-    <LinearLayout
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_below="@id/topBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/app_logo"
+        android:contentDescription="@string/company_logo" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_below="@id/topBar"
+        android:layout_above="@id/bottomNavigation"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/ProjectName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textStyle="bold"/>
-
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
-            android:gravity="center">
-
-            <Button
-                android:id="@+id/btnCreateTask"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Create_Task"
-                android:backgroundTint="@color/design_default_color_primary"/>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tasks"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
-
-        <LinearLayout
-            android:id="@+id/llTasksList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="8dp">
-        </LinearLayout>
+            android:paddingTop="180dp">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tvSelectUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_user"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/spinnerUsers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_background" />
+
+            <TextView
+                android:id="@+id/selectTask"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_task"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/spinnerTask"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_background" />
+
+            <Button
+                android:id="@+id/btnAddUser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_user_to_task"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/primaryColor"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </ScrollView>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/gray_light"
-        android:orientation="horizontal">
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
+        android:orientation="horizontal" />
+
 </RelativeLayout>

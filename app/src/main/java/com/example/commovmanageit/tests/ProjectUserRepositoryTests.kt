@@ -26,12 +26,6 @@ class ProjectUserRepositoryTest(
             try {
                 Log.d("RepositoryTest", "=== Starting Tests ===")
                 repository.clearLocalDatabase()
-                /*testLocalOperations()
-                testRemoteOperations()
-                testSyncOperations()
-                testObservationFlows()
-                testSearchOperations()
-                testCountOperations()*/
                 testInsertUpdateDeleteFunctions()
                 repository.clearLocalDatabase()
                 Log.d("RepositoryTest", "=== All Tests Completed ===")
@@ -49,7 +43,6 @@ class ProjectUserRepositoryTest(
     suspend fun testInsertUpdateDeleteFunctions() {
         Log.d("RepositoryTest", "-- Teste: Insert, Update e Delete (Local e Remoto) --")
 
-        // Teste remoto (com internet)
         if (connectivityMonitor.isConnected) {
             val remoteProjectUser = ProjectUserTestUtils.generateTestProjectUser(
                 "RemoteTest-${
@@ -74,18 +67,15 @@ class ProjectUserRepositoryTest(
             Log.d("RepositoryTest", "Sem internet, pulando teste remoto.")
         }
 
-        // Delay para desconectar a internet manualmente
         Log.d(
             "RepositoryTest",
             "Desconecte a internet agora para testar operações locais. Aguardando 30 segundos..."
         )
         kotlinx.coroutines.delay(30_000)
 
-        // Limpa localmente se já existir
         val localTestId = "local-test-${UUID.randomUUID().toString().substring(0, 8)}"
         repository.deleteLocal(localTestId, "Real")
 
-        // Teste local (sem internet)
         val localProjectUser = ProjectUserTestUtils.generateTestProjectUser(localTestId)
         val insertedLocal = repository.insert(localProjectUser)
         logTestResult("Insert local", !insertedLocal.isSynced)
@@ -103,7 +93,6 @@ class ProjectUserRepositoryTest(
             ProjectUserTestUtils.generateTestProjectUser(UUID.randomUUID().toString().substring(0, 8))
         val insertedLocal2 = repository.insert(localProjectUser2)
         logTestResult("Insert local", !insertedLocal.isSynced)
-        // Reconecte a internet e sincronize
         Log.d(
             "RepositoryTest",
             "Reconecte a internet para testar sincronização. Aguardando 30 segundos..."

@@ -92,30 +92,56 @@ class DashboardActivity : AppCompatActivity() {
                     }
                 }
             }
-            val isAdmin = userRole.equals("admin", ignoreCase = true)
+            val isAdmin = userRole == "admin"
             val allProjects = projectusersRepository.getByUserIdRemote(currentUser.id)
-            val projects = allProjects?.filter { it.deleted_at == null }
-            projectsContainer.removeAllViews()
-            val inflater = LayoutInflater.from(this@DashboardActivity)
-            if (projects != null) {
-                for (project in projects) {
-                    if (!isAdmin && project.user_id != currentUser.id) continue
-                    val card = inflater.inflate(R.layout.card_template, projectsContainer, false)
-                    card.findViewById<TextView>(R.id.tvProjectName).text =
-                        projectRepository.getByIdRemote(project.project_id)?.name
-                    val taskCount =
-                        taskuserRepository.getByUserIdRemote(currentUser.id ?: "")?.size ?: 0
-                    android.util.Log.d("DashboardActivity", "taskCount: $taskCount")
-                    card.findViewById<TextView>(R.id.tvTaskCount).text = "Tarefas: $taskCount"
-                    card.setOnClickListener {
-                        val intent = Intent(this@DashboardActivity, ProjectsActivity::class.java)
-                        intent.putExtra("projectId", project.id)
-                        startActivity(intent)
+            if (isAdmin) {
+                val projects = allProjects
+                projectsContainer.removeAllViews()
+                val inflater = LayoutInflater.from(this@DashboardActivity)
+                if (projects != null) {
+                    for (project in projects) {
+                        if (!isAdmin && project.user_id != currentUser.id) continue
+                        val card =
+                            inflater.inflate(R.layout.card_template, projectsContainer, false)
+                        card.findViewById<TextView>(R.id.tvProjectName).text =
+                            projectRepository.getByIdRemote(project.project_id)?.name
+                        val taskCount =
+                            taskuserRepository.getByUserIdRemote(currentUser.id ?: "")?.size ?: 0
+                        android.util.Log.d("DashboardActivity", "taskCount: $taskCount")
+                        card.findViewById<TextView>(R.id.tvTaskCount).text = "Tarefas: $taskCount"
+                        card.setOnClickListener {
+                            val intent =
+                                Intent(this@DashboardActivity, ProjectsActivity::class.java)
+                            intent.putExtra("projectId", project.id)
+                            startActivity(intent)
+                        }
+                        projectsContainer.addView(card)
                     }
-                    projectsContainer.addView(card)
+                }
+            }else{
+                val projects = allProjects?.filter { it.user_id == currentUser.id }
+                projectsContainer.removeAllViews()
+                val inflater = LayoutInflater.from(this@DashboardActivity)
+                if (projects != null) {
+                    for (project in projects) {
+                        val card =
+                            inflater.inflate(R.layout.card_template, projectsContainer, false)
+                        card.findViewById<TextView>(R.id.tvProjectName).text =
+                            projectRepository.getByIdRemote(project.project_id)?.name
+                        val taskCount =
+                            taskuserRepository.getByUserIdRemote(currentUser.id ?: "")?.size ?: 0
+                        android.util.Log.d("DashboardActivity", "taskCount: $taskCount")
+                        card.findViewById<TextView>(R.id.tvTaskCount).text = "Tarefas: $taskCount"
+                        card.setOnClickListener {
+                            val intent =
+                                Intent(this@DashboardActivity, ProjectsActivity::class.java)
+                            intent.putExtra("projectId", project.id)
+                            startActivity(intent)
+                        }
+                        projectsContainer.addView(card)
+                    }
                 }
             }
-            // Esconde botão de criar projeto se não for admin
             btnCreateProject.visibility = if (isAdmin) View.VISIBLE else View.GONE
         }
     }

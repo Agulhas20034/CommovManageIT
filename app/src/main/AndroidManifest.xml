@@ -50,6 +50,30 @@
         <activity
             android:name="com.example.commovmanageit.EditProfileActivity"
             android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.UsersActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.CreateUserActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.EditUserActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.TasksActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.CreateTasksActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.EditTasksActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.AddUserToProjectActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.example.commovmanageit.AddUserToTaskActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

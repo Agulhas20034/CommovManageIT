@@ -1,3 +1,4 @@
+
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -235,10 +236,8 @@ class UsersRepository(
 
     suspend fun getByProjectIdRemote(projectId: String): List<UserRemote>? {
         return try {
-            // Busca os user_ids na tabela projectusers
             val projectUsers = SupabaseManager.fetchByUserId<ProjectUserRemote>("project_users", projectId, "project_id")
             val userIds = projectUsers.map { it.user_id }
-            // Busca os usuários na tabela users usando os ids encontrados
             val users = userIds.map { userId ->
                 Log.d("UsersRepository", "Fetching remote Users by ID: $userId")
                 SupabaseManager.fetchById<UserRemote>("users", userId)

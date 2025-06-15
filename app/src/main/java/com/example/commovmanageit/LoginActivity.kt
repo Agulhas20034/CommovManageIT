@@ -37,7 +37,11 @@ class LoginActivity : AppCompatActivity() {
 
         tvCurrentLanguage.text = currentLanguage
 
-        btnBack.setOnClickListener { finish() }
+        btnBack.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         btnLanguage.setOnClickListener {
             currentLanguage = if (currentLanguage == "en") "pt" else "en"

@@ -70,21 +70,18 @@ class EditProjectActivity : AppCompatActivity() {
                 }
             }
 
-            // Carregar dados do projeto
             val project = projectRepository.getByIdRemote(projectId ?: "")?.toLocal()
             etProjectName.setText(project?.name ?: "")
             etProjectDescription.setText(project?.description ?: "")
             etHourlyRate.setText(project?.hourlyRate?.toString() ?: "")
             etDailyWorkHours.setText(project?.dailyWorkHours?.toString() ?: "")
 
-            // Carregar usuários para o spinner (apenas gerentes)
             val users = userRepository.getAllRemote()?.filter { it.roleId == "2" } ?: listOf()
             Toast.makeText(this@EditProjectActivity, "Usuários carregados: ${users.size}", Toast.LENGTH_SHORT).show()
             val adapter = ArrayAdapter(this@EditProjectActivity, android.R.layout.simple_spinner_item, users.map { it.email })
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinnerProjectManager.adapter = adapter
 
-            // Selecionar gerente atual
             val managerIndex = users.indexOfFirst { it.id == project?.userId }
             if (managerIndex >= 0) spinnerProjectManager.setSelection(managerIndex)
 

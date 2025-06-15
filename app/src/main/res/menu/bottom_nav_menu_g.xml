@@ -3,13 +3,16 @@
     <item
         android:id="@+id/nav_main"
         android:icon="@drawable/ic_main"
-        android:title="@string/main"/>
+        android:title="@string/main"
+        android:textColor="@color/black"/>
     <item
         android:id="@+id/nav_tasks"
         android:icon="@drawable/ic_manage_tasks"
-        android:title="@string/manage_tasks"/>
+        android:title="@string/manage_tasks"
+        android:textColor="@color/black"/>
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_profile"
-        android:title="@string/profile"/>
+        android:title="@string/profile"
+        android:textColor="@color/black"/>
 </menu>

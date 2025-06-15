@@ -13,6 +13,7 @@ import kotlinx.serialization.Serializable
 data class TaskRemote(
     @SerialName("id") val id: String,
     @SerialName("project_id") val project_id: String,
+    @SerialName("user_id") val user_id: String?,
     @SerialName("name") val name: String?,
     @SerialName("description") val description: String,
     @SerialName("hourly_rate") val hourly_rate: Float?,
@@ -25,6 +26,7 @@ data class TaskRemote(
 @RequiresApi(Build.VERSION_CODES.O)
 fun TaskRemote.toLocal() = Task(
     id = id,
+    userId = user_id,
     projectId = project_id,
     name = name,
     description = description,
@@ -40,14 +42,15 @@ fun TaskRemote.toLocal() = Task(
 @RequiresApi(Build.VERSION_CODES.O)
 fun Task.toRemote() = TaskRemote(
     id = id,
-    project_id = projectId,
+    user_id = userId.toString(),
+    project_id = projectId.toString(),
     name = name,
     description = description,
     hourly_rate = hourlyRate,
     status = status,
     created_at = createdAt.toString(),
     updated_at = updatedAt.toString(),
-    deleted_at = deletedAt?.let { it.toString() },
+    deleted_at = deletedAt?.toString(),
 )
 
 private fun parseDateTimeString(dateTimeString: String): Instant {

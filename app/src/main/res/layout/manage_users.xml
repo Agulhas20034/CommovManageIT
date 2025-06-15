@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".TasksActivity">
+    tools:context=".UsersActivity">
+
     <RelativeLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -21,11 +22,12 @@
             android:padding="8dp"
             android:src="@drawable/ic_left_arrow"
             tools:ignore="TouchTargetSizeCheck" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/manage_tasks"
+            android:text="@string/manage_users"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -38,7 +40,6 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             tools:ignore="RelativeOverlap">
-
 
             <TextView
                 android:id="@+id/CurrentLanguage"
@@ -60,50 +61,39 @@
                 tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/ProjectName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textStyle="bold"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
-            android:gravity="center">
-
-            <Button
-                android:id="@+id/btnCreateTask"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Create_Task"
-                android:backgroundTint="@color/design_default_color_primary"/>
-        </LinearLayout>
+        android:padding="16dp"
+        android:layout_below="@id/topBar"
+        android:layout_above="@id/bottomNavigation">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/tasks"
+            android:text="@string/users"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:textSize="24sp"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnAddUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_user"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
 
         <LinearLayout
-            android:id="@+id/llTasksList"
+            android:id="@+id/llUsersList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="8dp">
+            android:orientation="vertical">
         </LinearLayout>
-
     </LinearLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"

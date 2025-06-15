@@ -221,7 +221,7 @@ class TaskUserRepository(
         return try {
             val remoteTaskUser = SupabaseManager.fetchById<TaskUserRemote>("task_users", id)
 
-            remoteTaskUser?.let { TaskUser ->
+            remoteTaskUser.let { TaskUser ->
                 TaskUserDao.update(TaskUser.toLocal())
             }
 
@@ -235,7 +235,21 @@ class TaskUserRepository(
         return try {
             val remoteTask = SupabaseManager.fetchByUserId<TaskUserRemote>("task_users", id, "user_id")
 
-            remoteTask?.let { task ->
+            remoteTask.let { task ->
+                task.forEach { TaskUserDao.update(it.toLocal()) }
+            }
+
+            return remoteTask
+        } catch (e: Exception) {
+            Log.e("TaskRepository", "Error fetching remote Task(normal if in test)", e)
+            null
+        }
+    }
+    suspend fun getByTaskIdRemote(id: String): List<TaskUserRemote>? {
+        return try {
+            val remoteTask = SupabaseManager.fetchByUserId<TaskUserRemote>("task_users", id, "task_id")
+
+            remoteTask.let { task ->
                 task.forEach { TaskUserDao.update(it.toLocal()) }
             }
 

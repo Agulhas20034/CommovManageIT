@@ -43,7 +43,6 @@ class CreateProjectActivity : AppCompatActivity() {
 
         tvCurrentLanguage.text = currentLanguage
 
-        // Carregar usuários para o spinner
         CoroutineScope(Dispatchers.Main).launch {
             val users = userRepository.getAllRemote()
             val customers = customerRepository.getAllRemote()

@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -45,14 +46,15 @@ class ProjectsActivity : AppCompatActivity() {
         val tvCurrentLanguage = findViewById<TextView>(R.id.CurrentLanguage)
         val tvProjectName = findViewById<TextView>(R.id.ProjectName)
         val tvProjectDescription = findViewById<TextView>(R.id.ProjectDescription)
-        val btnEditProject = findViewById<Button>(R.id.btnEditProject)
-        val btnDeleteProject = findViewById<Button>(R.id.btnDeleteProject)
-        val btnAddTask = findViewById<Button>(R.id.btnAddTask)
-        val btnAddUser = findViewById<Button>(R.id.btnAddUser)
-        val llUsersList = findViewById<LinearLayout>(R.id.llUsersList)
+        val btnEditProject = findViewById<Button>(R.id.btnEditProject).apply { visibility = View.GONE }
+        val btnDeleteProject = findViewById<Button>(R.id.btnDeleteProject).apply { visibility = View.GONE }
+        val btnAddTask = findViewById<Button>(R.id.btnAddTask).apply { visibility = View.GONE }
+        val btnAddUser = findViewById<Button>(R.id.btnAddUser).apply { visibility = View.GONE }
+        val llUsersList = findViewById<LinearLayout>(R.id.llUsersList).apply { visibility = View.GONE }
+        val tvUsers = findViewById<TextView>(R.id.tvUsers).apply { visibility = View.GONE }
         val llTasksList = findViewById<LinearLayout>(R.id.llTasksList)
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
-
+        var projectId2: String? = null
         tvCurrentLanguage.text = currentLanguage
 
         val projectId = intent.getStringExtra("projectId") ?: return
@@ -81,7 +83,9 @@ class ProjectsActivity : AppCompatActivity() {
                     }
                 }
             }
-
+            val isAdmin = userRole == "admin"
+            val isManager = userRole == "manager"
+            projectId2 = projectusersRepository.getByIdRemote(projectId)?.project_id ?: ""
             val projectusers = projectusersRepository.getByIdRemote(projectId)
             val tasks = taskRepository.getByProjectIdRemote(projectusers?.project_id ?: "")
             val users = userRepository.getByProjectIdRemote(projectusers?.project_id ?: "")
@@ -100,12 +104,41 @@ class ProjectsActivity : AppCompatActivity() {
 
             val inflaterTasks = LayoutInflater.from(this@ProjectsActivity)
             llTasksList.removeAllViews()
-            tasks?.forEach { task ->
+            tasks?.filter { task ->
+                taskuserRepository.getByTaskIdRemote(task.id)?.any { it.user_id == currentUser.serverId } == true
+            }?.forEach { task ->
+                Log.d("ProjectsActivity", "Task ${task.name} is visible to user ${currentUser.email}")
                 val card = inflaterTasks.inflate(R.layout.card_template, llTasksList, false)
                 card.findViewById<TextView>(R.id.tvProjectName).text = task.name
                 card.findViewById<TextView>(R.id.tvTaskCount).text = "ID: ${task.id}"
+                card.findViewById<TextView>(R.id.status).text = task.status
+                card.setOnClickListener {
+                    val statuses = listOf("open", "in_progress", "completed", "archived")
+                    val currentIndex = statuses.indexOf(task.status)
+                    val builder = android.app.AlertDialog.Builder(this@ProjectsActivity)
+                    builder.setTitle(getString(R.string.choose_status))
+                    builder.setSingleChoiceItems(statuses.toTypedArray(), currentIndex) { dialog, which ->
+                        val nextStatus = statuses[which]
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val updatedTask = task.copy(status = nextStatus)
+                            taskRepository.update(updatedTask.toLocal())
+                            recreate()
+                        }
+                        dialog.dismiss()
+                    }
+                    builder.setNegativeButton(getString(R.string.cancel_button), null)
+                    builder.show()
+                }
                 llTasksList.addView(card)
             }
+
+            btnAddTask.visibility = if (isAdmin || isManager) View.VISIBLE else View.GONE
+            btnEditProject.visibility = if (isAdmin) View.VISIBLE else View.GONE
+            btnAddUser.visibility = if (isAdmin || isManager) View.VISIBLE else View.GONE
+            btnDeleteProject.visibility = if (isAdmin) View.VISIBLE else View.GONE
+            llUsersList.visibility = if (isAdmin || isManager) View.VISIBLE else View.GONE
+            tvUsers.visibility = if (isAdmin || isManager) View.VISIBLE else View.GONE
+
         }
 
         btnEditProject.setOnClickListener {
@@ -134,16 +167,15 @@ class ProjectsActivity : AppCompatActivity() {
                 .create()
             alertDialog.show()
         }
-
         btnAddTask.setOnClickListener {
-            val intent = Intent(this, CreateTasksActivity::class.java)
-            intent.putExtra("projectId", projectId)
+            val intent = Intent(this, AddUserToTaskActivity::class.java)
+            intent.putExtra("projectId", projectId2)
             startActivity(intent)
         }
 
         btnAddUser.setOnClickListener {
             val intent = Intent(this, AddUserToProjectActivity::class.java)
-            intent.putExtra("projectId", projectId)
+            intent.putExtra("projectId", projectId2)
             startActivity(intent)
         }
     }

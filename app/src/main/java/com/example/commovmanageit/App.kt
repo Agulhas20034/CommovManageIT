@@ -4,6 +4,7 @@ import ProjectRepository
 import UsersRepository
 import android.app.Application
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.work.*
@@ -57,17 +58,17 @@ class App : Application() {
         currentUser = null
     }
     fun getSavedLanguage(context: Context): String {
-        val sharedPref = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val sharedPref = context.getSharedPreferences("prefs", MODE_PRIVATE)
         return sharedPref.getString("language", "en") ?: "en"
     }
     fun loadLanguage(context: Context) {
-        val sharedPref = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
+        val sharedPref = context.getSharedPreferences("prefs", MODE_PRIVATE)
         currentLanguage = sharedPref.getString("language", "en") ?: "en"
         updateLanguage(context, currentLanguage)
     }
 
     fun saveLanguage(context: Context, lang: String) {
-        val editor = context.getSharedPreferences("prefs", Context.MODE_PRIVATE).edit()
+        val editor = context.getSharedPreferences("prefs", MODE_PRIVATE).edit()
         editor.putString("language", lang)
         editor.apply()
     }
@@ -75,7 +76,7 @@ class App : Application() {
     fun updateLanguage(context: Context, languageCode: String) {
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
-        val config = android.content.res.Configuration(context.resources.configuration)
+        val config = Configuration(context.resources.configuration)
         config.setLocale(locale)
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }
@@ -142,152 +143,160 @@ class App : Application() {
             connectivityMonitor = ConnectivityMonitor(this),
             coroutineScope = appCoroutineScope
         )
-        appCoroutineScope.launch{
-            if(permissionRepository.getByIdRemote("1") == null) {
-                permissionRepository.insertRemote(
-                    Permission(
-                        id = "1",
-                        label = "Admin",
-                        isSynced = true,
-                        serverId = "1"
-                    )
-                )
-            }
-            if(roleRepository.getByIdRemote("1") == null && roleRepository.getByIdRemote("2") == null && roleRepository.getByIdRemote("3") == null) {
-                roleRepository.insertRemote(
-                    Role(
-                        id = "1",
-                        name = "Admin",
-                        isSynced = true,
-                        serverId = "1",
-                        permissionId = "1"
-                    )
-                )
-                roleRepository.insertRemote(
-                    Role(
-                        id = "2",
-                        name = "UserManager",
-                        isSynced = true,
-                        serverId = "2",
-                        permissionId = "1"
-                    )
-                )
-                roleRepository.insertRemote(
-                    Role(
-                        id = "3",
-                        name = "User",
-                        isSynced = true,
-                        serverId = "3",
-                        permissionId = "1"
-                    )
-                )
-            }
-            if(userRepository.getByIdRemote("1") == null && userRepository.getByIdRemote("2") == null && userRepository.getByIdRemote("3") == null) {
-                userRepository.insertRemote(
-                    User(
-                        id = "1",
-                        email = "test1@email.com",
-                        isSynced = true,
-                        serverId = "1",
-                        roleId = "1",
-                        dailyWorkHours = 8,
-                        password = "teste"
-                    )
-                )
-                userRepository.insertRemote(
-                    User(
-                        id = "2",
-                        email = "test2@email.com",
-                        isSynced = true,
-                        serverId = "2",
-                        roleId = "2",
-                        dailyWorkHours = 8,
-                        password = "teste"
-                    )
-                )
-                userRepository.insertRemote(
-                    User(
-                        id = "3",
-                        email = "test3@email.com",
-                        isSynced = true,
-                        serverId = "3",
-                        roleId = "3",
-                        dailyWorkHours = 8,
-                        password = "teste"
-                    )
-                )
-            }
-            if(customerRepository.getByIdRemote("1") == null) {
-                customerRepository.insertRemote(
-                    Customer(
-                        id = "1",
-                        email = "Admin",
-                        isSynced = true,
-                        serverId = "1",
-                        name = "teste",
-                        phone_Number = "teste"
-                    )
-                )
-            }
-            if(projectRepository.getByIdRemote("1") == null) {
-                projectRepository.insertRemote(
-                    Project(
-                        id = "1",
-                        isSynced = true,
-                        serverId = "1",
-                        name = "teste",
-                        userId = "1",
-                        customerId = "1",
-                        hourlyRate = 1.0F,
-                        dailyWorkHours = 1,
-                        description = "teste"
-                    )
-                )
-            }
-            if(projectusersRepository.getByIdRemote("1") == null) {
-                projectusersRepository.insertRemote(
-                    ProjectUser(
-                        id = "1",
-                        isSynced = true,
-                        serverId = "1",
-                        userId = "1",
-                        projectId = "1",
-                        inviterId = "1",
-                        speed = 1,
-                        quality = 1,
-                        collaboration = 1,
-                        status = "active"
-                    )
-                )
-            }
-            if(reportRepository.getByIdRemote("1") == null) {
-                reportRepository.insertRemote(
-                    Report(
-                        id = "1",
-                        isSynced = true,
-                        serverId = "1",
-                        userId = "1",
-                        projectId = "1",
-                    )
-                )
-            }
-            if(taskRepository.getByIdRemote("1") == null) {
-                taskRepository.insertRemote(
-                    Task(
-                        id = "1",
-                        isSynced = true,
-                        serverId = "1",
-                        projectId = "1",
-                        name = "test",
-                        description = "test",
-                        hourlyRate = 1f,
-                        status = "open",
-                    )
-                )
-            }
-
-        }
         connectivityMonitor = ConnectivityMonitor(this)
+        appCoroutineScope.launch {
+            if (connectivityMonitor.isConnected) {
+                if (permissionRepository.getByIdRemote("1") == null) {
+                    permissionRepository.insertRemote(
+                        Permission(
+                            id = "1",
+                            label = "Admin",
+                            isSynced = true,
+                            serverId = "1"
+                        )
+                    )
+                }
+                if (roleRepository.getByIdRemote("1") == null && roleRepository.getByIdRemote("2") == null && roleRepository.getByIdRemote(
+                        "3"
+                    ) == null
+                ) {
+                    roleRepository.insertRemote(
+                        Role(
+                            id = "1",
+                            name = "Admin",
+                            isSynced = true,
+                            serverId = "1",
+                            permissionId = "1"
+                        )
+                    )
+                    roleRepository.insertRemote(
+                        Role(
+                            id = "2",
+                            name = "UserManager",
+                            isSynced = true,
+                            serverId = "2",
+                            permissionId = "1"
+                        )
+                    )
+                    roleRepository.insertRemote(
+                        Role(
+                            id = "3",
+                            name = "User",
+                            isSynced = true,
+                            serverId = "3",
+                            permissionId = "1"
+                        )
+                    )
+                }
+                if (userRepository.getByIdRemote("1") == null && userRepository.getByIdRemote("2") == null && userRepository.getByIdRemote(
+                        "3"
+                    ) == null
+                ) {
+                    userRepository.insertRemote(
+                        User(
+                            id = "1",
+                            email = "test1@email.com",
+                            isSynced = true,
+                            serverId = "1",
+                            roleId = "1",
+                            dailyWorkHours = 8,
+                            password = "teste"
+                        )
+                    )
+                    userRepository.insertRemote(
+                        User(
+                            id = "2",
+                            email = "test2@email.com",
+                            isSynced = true,
+                            serverId = "2",
+                            roleId = "2",
+                            dailyWorkHours = 8,
+                            password = "teste"
+                        )
+                    )
+                    userRepository.insertRemote(
+                        User(
+                            id = "3",
+                            email = "test3@email.com",
+                            isSynced = true,
+                            serverId = "3",
+                            roleId = "3",
+                            dailyWorkHours = 8,
+                            password = "teste"
+                        )
+                    )
+                }
+                if (customerRepository.getByIdRemote("1") == null) {
+                    customerRepository.insertRemote(
+                        Customer(
+                            id = "1",
+                            email = "Admin",
+                            isSynced = true,
+                            serverId = "1",
+                            name = "teste",
+                            phone_Number = "teste"
+                        )
+                    )
+                }
+                if (projectRepository.getByIdRemote("1") == null) {
+                    projectRepository.insertRemote(
+                        Project(
+                            id = "1",
+                            isSynced = true,
+                            serverId = "1",
+                            name = "teste",
+                            userId = "1",
+                            customerId = "1",
+                            hourlyRate = 1.0F,
+                            dailyWorkHours = 1,
+                            description = "teste"
+                        )
+                    )
+                }
+                if (projectusersRepository.getByIdRemote("1") == null) {
+                    projectusersRepository.insertRemote(
+                        ProjectUser(
+                            id = "1",
+                            isSynced = true,
+                            serverId = "1",
+                            userId = "1",
+                            projectId = "1",
+                            inviterId = "1",
+                            speed = 1,
+                            quality = 1,
+                            collaboration = 1,
+                            status = "active"
+                        )
+                    )
+                }
+                if (reportRepository.getByIdRemote("1") == null) {
+                    reportRepository.insertRemote(
+                        Report(
+                            id = "1",
+                            isSynced = true,
+                            serverId = "1",
+                            userId = "1",
+                            projectId = "1",
+                        )
+                    )
+                }
+                if (taskRepository.getByIdRemote("1") == null) {
+                    taskRepository.insertRemote(
+                        Task(
+                            id = "1",
+                            isSynced = true,
+                            serverId = "1",
+                            projectId = "1",
+                            name = "test",
+                            description = "test",
+                            hourlyRate = 1f,
+                            status = "open",
+                        )
+                    )
+                }
+
+            }
+        }
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -302,6 +311,5 @@ class App : Application() {
             ExistingPeriodicWorkPolicy.KEEP,
             syncRequest
         )
-
     }
 }

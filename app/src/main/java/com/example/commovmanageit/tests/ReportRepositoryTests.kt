@@ -44,7 +44,6 @@ class ReportRepositoryTest(
     suspend fun testInsertUpdateDeleteFunctions() {
         Log.d("RepositoryTest", "-- Teste: Insert, Update e Delete (Local e Remoto) --")
 
-        // Teste remoto (com internet)
         if (connectivityMonitor.isConnected) {
             val remoteReport = ReportTestUtils.generateTestReport(
                 "RemoteTest-${
@@ -69,18 +68,15 @@ class ReportRepositoryTest(
             Log.d("RepositoryTest", "Sem internet, pulando teste remoto.")
         }
 
-        // Delay para desconectar a internet manualmente
         Log.d(
             "RepositoryTest",
             "Desconecte a internet agora para testar operações locais. Aguardando 30 segundos..."
         )
         kotlinx.coroutines.delay(30_000)
 
-        // Limpa localmente se já existir
         val localTestId = "local-test-${UUID.randomUUID().toString().substring(0, 8)}"
         repository.deleteLocal(localTestId, "Real")
 
-        // Teste local (sem internet)
         val localReport = ReportTestUtils.generateTestReport(localTestId)
         val insertedLocal = repository.insert(localReport)
         logTestResult("Insert local", !insertedLocal.isSynced)
@@ -98,7 +94,6 @@ class ReportRepositoryTest(
             ReportTestUtils.generateTestReport(UUID.randomUUID().toString().substring(0, 8))
         val insertedLocal2 = repository.insert(localReport2)
         logTestResult("Insert local", !insertedLocal.isSynced)
-        // Reconecte a internet e sincronize
         Log.d(
             "RepositoryTest",
             "Reconecte a internet para testar sincronização. Aguardando 30 segundos..."
